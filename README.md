@@ -13,7 +13,7 @@ Workflow steps:
 1. User creates a docker image, uploads the image to the Amazon ECR or another container registry (for example, DockerHub), and creates a job definition, compute environment and job queue in AWS Batch. In this repo, we use an AWS official image `public.ecr.aws/amazonlinux/amazonlinux:latest` for demo purpose.
 2. Batch job is submitted using job definition into the job queue in AWS Batch by CloudWatch Event regularly as scheduled.
 3. AWS Batch launches an EC2 instance in computing environment, pulls the image from the image registry and create an container.
-4. The container should implement some tasks on your behave.
+4. The container should implement some tasks on your behave. An email notification will be triggered if the job is failed.
 5. After done, the container will be stopped and removed. EC2 Instance is shutdown automatically by AWS Batch. 
 
 ## Terraform Structure
