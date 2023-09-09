@@ -1,0 +1,3 @@
+region         = "cn-north-1"
+bucket         = "tf-state-756143471679-cn-north-1"
+profile        = "service.app-deployment-dev-ci-bot"
