@@ -59,7 +59,7 @@ aws batch submit-job \
   --job-definition arn:aws-cn:batch:cn-north-1:756143471679:job-definition/dev-helloworld-jd:4 \
   --job-queue arn:aws-cn:batch:cn-north-1:756143471679:job-queue/dev-helloworld-jq
 ```
-After submitted successfully, go to AWS Console -> Batch -> Jobs. Select the target job queue from the dropdown list, then your new submitted job will be listed on the top. It will spend a few minutes for a job to complete, according to the job processing time, and whether you allocate an EC2 instance resource in advance by giving variable `desired_vcpus` a number greater than 0 or not.
+After submitted successfully, go to AWS Console -> Batch -> Jobs. Select the target job queue from the dropdown list, then your new submitted job will be listed on the top. It will spend a few minutes for a job to complete, according to the job processing time, and whether you allocate an EC2 instance resource in advance by giving variable `desired_vcpus` a number greater than 0 or not. If the job failed, an email notification will be sent out to the Topic subscribers you provided in variable `notification_email_addresses`.
 
 As designed, we keep the `desired_vcpus` as `0` as default for saving cost, which means a new EC2 instance will be launched when a new job is submitted and shut down immediately after completed. The screenshot below shows the lastest job that submmitted by CloudWatch Event (EventBridge) at 04:00 AM (UTC).
 
@@ -74,3 +74,4 @@ The logging data is saved to CloudWatch Logs automatically. You can find the log
 3. https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/sns_topic
 4. https://docs.aws.amazon.com/batch/latest/userguide/batch-cwe-target.html
 5. https://docs.aws.amazon.com/batch/latest/userguide/batch_sns_tutorial.html
+6. https://docs.aws.amazon.com/batch/latest/userguide/batch_cwe_events.html

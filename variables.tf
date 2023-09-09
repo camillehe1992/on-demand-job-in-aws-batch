@@ -109,3 +109,8 @@ variable "schedule_expression" {
   type        = string
   description = "The scheduled CRON expression for CloudWatch Event"
 }
+
+variable "notification_email_addresses" {
+  type        = list(string)
+  description = "The list of email address that subscribes the SNS topic to receive notification"
+}

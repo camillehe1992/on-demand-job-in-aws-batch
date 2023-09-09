@@ -113,7 +113,6 @@ module "submit_batch_job_rule" {
   rule_description    = "Submit a Batch job as scheduled"
   schedule_expression = var.schedule_expression
   is_enabled          = true
-  rule_input          = "{}"
   # rule target
   target_arn                      = module.batch.batch_job_queue.id
   target_id                       = "submitBatchJob"
@@ -141,13 +140,13 @@ module "capture_failed_batch_job_rule" {
       "aws.batch"
     ],
     "detail" : {
+      "jobDefinition" : [module.batch.batch_job_definition.arn]
       "status" : [
         "FAILED"
       ]
     }
   })
   is_enabled = true
-  rule_input = "{}"
   # rule target
   target_arn = module.job_failed_alert_sns_topic.sns_topic.arn
   target_id  = "sendToSNS"
@@ -161,7 +160,7 @@ module "job_failed_alert_sns_topic" {
   tags     = var.tags
 
   topic_name                   = "job-failed-alert"
-  notification_email_addresses = ["camille.he@outlook.com"]
+  notification_email_addresses = var.notification_email_addresses
 
   sns_topic_policy = data.aws_iam_policy_document.sns_topic_policy.json
 }

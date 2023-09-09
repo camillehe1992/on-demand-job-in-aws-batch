@@ -33,4 +33,5 @@ resource_requirements_mem  = "128"
 log_level                  = "debug"
 
 # CW Event vars
-schedule_expression = "cron(0 4 * * ? *)" # trigger at 4:00 at UTC. 
+schedule_expression          = "cron(0 4 * * ? *)" # trigger at 4:00 at UTC. 
+notification_email_addresses = ["camille.he@outlook.com"]
