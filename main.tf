@@ -101,7 +101,7 @@ module "batch" {
   }
 }
 
-module "eventbridge_rule" {
+module "submit_batch_job_rule" {
   source = "./terraform/modules/eventbridge"
 
   env      = var.env
@@ -116,7 +116,52 @@ module "eventbridge_rule" {
   rule_input          = "{}"
   # rule target
   target_arn                      = module.batch.batch_job_queue.id
+  target_id                       = "submitBatchJob"
   role_arn                        = module.cw_event_trigger_batch_role.iam_role.arn
   batch_target_job_definition_arn = module.batch.batch_job_definition.arn
   job_name                        = "triggered-via-eventbridge"
+}
+
+
+module "capture_failed_batch_job_rule" {
+  source = "./terraform/modules/eventbridge"
+
+  env      = var.env
+  nickname = var.nickname
+  tags     = var.tags
+
+  # rule
+  rule_name        = "capture_failed_batch_job_rule"
+  rule_description = "Register an event rule that captures only job-failed events"
+  event_pattern = jsonencode({
+    "detail-type" : [
+      "Batch Job State Change"
+    ],
+    "source" : [
+      "aws.batch"
+    ],
+    "detail" : {
+      "status" : [
+        "FAILED"
+      ]
+    }
+  })
+  is_enabled = true
+  rule_input = "{}"
+  # rule target
+  target_arn = module.job_failed_alert_sns_topic.sns_topic.arn
+  target_id  = "sendToSNS"
+  role_arn   = module.cw_event_trigger_batch_role.iam_role.arn
+}
+
+module "job_failed_alert_sns_topic" {
+  source   = "./terraform/modules/sns"
+  env      = var.env
+  nickname = var.nickname
+  tags     = var.tags
+
+  topic_name                   = "job-failed-alert"
+  notification_email_addresses = ["camille.he@outlook.com"]
+
+  sns_topic_policy = data.aws_iam_policy_document.sns_topic_policy.json
 }

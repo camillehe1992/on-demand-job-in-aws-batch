@@ -67,3 +67,10 @@ As designed, we keep the `desired_vcpus` as `0` as default for saving cost, whic
 
 ## Logging
 The logging data is saved to CloudWatch Logs automatically. You can find the logs on the bottom of the job details (some delay to sync logs from CloudWatch Logs). In the job details view page, it also provides a link to the log stream of current job. AWS creates a CloudWatch Logs group named `/aws/batch/job` automatically when you submit a Batch job at the first time in the same region.
+
+# Reference
+1. https://docs.aws.amazon.com/batch/latest/userguide/what-is-batch.html
+2. https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/batch_compute_environment#compute_resources
+3. https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/sns_topic
+4. https://docs.aws.amazon.com/batch/latest/userguide/batch-cwe-target.html
+5. https://docs.aws.amazon.com/batch/latest/userguide/batch_sns_tutorial.html

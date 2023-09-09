@@ -28,8 +28,14 @@ variable "rule_description" {
 
 variable "schedule_expression" {
   type        = string
-  default     = "cron(0 1 * * ? *)"
+  default     = ""
   description = "The schedule expression for CW Event rule in UTC. Trigger at 1:00 AM at UTC"
+}
+
+variable "event_pattern" {
+  type        = string
+  default     = ""
+  description = "The event pattern that rule should capture"
 }
 
 variable "is_enabled" {
@@ -41,6 +47,11 @@ variable "is_enabled" {
 variable "target_arn" {
   type        = string
   description = "The ARN of the target"
+}
+
+variable "target_id" {
+  type        = string
+  description = "The id of the target"
 }
 
 variable "role_arn" {
@@ -56,10 +67,12 @@ variable "rule_input" {
 
 variable "batch_target_job_definition_arn" {
   type        = string
+  default     = ""
   description = "The ARN or name of the job definition to use if the event target is an AWS Batch job"
 }
 variable "job_name" {
   type        = string
+  default     = ""
   description = "The name of Batch job submitted"
 }
 

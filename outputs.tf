@@ -23,5 +23,9 @@ output "batch_job_definition_arn" {
 }
 
 output "submit_batch_job_event_rule_arn" {
-  value = module.eventbridge_rule.submit_batch_job_event_rule.arn
+  value = module.submit_batch_job_rule.submit_batch_job_event_rule.arn
+}
+
+output "sns_topic_arn" {
+  value = module.job_failed_alert_sns_topic.sns_topic.arn
 }
