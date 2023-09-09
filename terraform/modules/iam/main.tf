@@ -27,6 +27,6 @@ resource "aws_iam_role_policy_attachment" "customized_policy_attachment" {
 
 resource "aws_iam_instance_profile" "role_profile" {
   count = var.has_iam_instance_profile ? 1 : 0
-  name  = "${var.env}-${var.nickname}-${var.role_name}"
+  name  = aws_iam_role.role.name
   role  = aws_iam_role.role.name
 }

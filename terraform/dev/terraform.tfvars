@@ -3,7 +3,7 @@
 ##############################################
 
 aws_region  = "cn-north-1"
-aws_profile = "service.hyc-deploy-ci-bot"
+aws_profile = "service.app-deployment-dev-ci-bot"
 
 env      = "dev"
 nickname = "helloworld"
@@ -22,8 +22,8 @@ instance_type              = ["c4.large"]
 max_vcpus                  = 8
 min_vcpus                  = 0
 desired_vcpus              = 0
-subnet_ids                 = ["subnet-087077f0f70c0fead", "subnet-068a96b742aecee34"]
-security_group_ids         = ["sg-03350f19c0194d309"]
+subnet_ids                 = ["subnet-04839c488f31e2829", "subnet-08122d3fc6e3ce9b1"]
+security_group_ids         = ["sg-00fe42c9972b4e4af"]
 attempt_duration_seconds   = 60
 retry_strategy_attempts    = 3
 command                    = ["echo", "hello world"]

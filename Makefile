@@ -6,7 +6,7 @@ ENVIRONMENT = dev
 NICKNAME = helloworld
 AWS_REGION=cn-north-1
 
-export AWS_PROFILE=service.hyc-deploy-ci-bot
+export AWS_PROFILE=service.app-deployment-dev-ci-bot
 export TF_VAR_my_secret=replace_me
 
 target:

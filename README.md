@@ -51,13 +51,13 @@ Currently, the Batch job is submitted/triggered by CloudWatch Event (EventBridge
 
 ```bash
 # Setup AWS_PROFILE with permission to submit batch job
-export AWS_PROFILE=service.hyc-deploy-ci-bot
+export AWS_PROFILE=service.app-deployment-dev-ci-bot
 
 # Submit a job using CLI
 aws batch submit-job \
   --job-name triggered-via-cli \
-  --job-definition arn:aws-cn:batch:cn-north-1:756143471679:job-definition/dev-carbon-jd:6 \
-  --job-queue arn:aws-cn:batch:cn-north-1:756143471679:job-queue/dev-carbon-jq
+  --job-definition arn:aws-cn:batch:cn-north-1:756143471679:job-definition/dev-helloworld-jd:4 \
+  --job-queue arn:aws-cn:batch:cn-north-1:756143471679:job-queue/dev-helloworld-jq
 ```
 After submitted successfully, go to AWS Console -> Batch -> Jobs. Select the target job queue from the dropdown list, then your new submitted job will be listed on the top. It will spend a few minutes for a job to complete, according to the job processing time, and whether you allocate an EC2 instance resource in advance by giving variable `desired_vcpus` a number greater than 0 or not.
 
