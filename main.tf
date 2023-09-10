@@ -101,7 +101,7 @@ module "batch" {
   }
 }
 
-module "submit_batch_job_rule" {
+module "submit_batch_job_event" {
   source = "./terraform/modules/eventbridge"
 
   env      = var.env
@@ -121,8 +121,7 @@ module "submit_batch_job_rule" {
   job_name                        = "triggered-via-eventbridge"
 }
 
-
-module "capture_failed_batch_job_rule" {
+module "capture_failed_batch_event" {
   source = "./terraform/modules/eventbridge"
 
   env      = var.env
