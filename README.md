@@ -26,10 +26,10 @@ All AWS infrastructure is created and maintained using Terraform. The Terraform 
 ├── main.tf           # The reference of modules
 ├── outputs.tf        # The outputs of Terraform resources
 ├── terraform         
-│   ├── dev           # Environment specified variables
+│   ├── environments           # Environment specified variables
 │   └── modules       # Terraform modules
-├── variables.tf      # Terraform input variables that shoudl be passed to the arch module
-└── versions.tf       # Defines the versions of Terraform and provides
+├── variables.tf      # Terraform input variables that should be passed to the arch module
+└── versions.tf       # Defines the versions of Terraform and providers
 ```
 
 ## Deploy/Destory Terraform Infrastructure

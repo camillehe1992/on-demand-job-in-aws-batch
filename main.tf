@@ -53,7 +53,7 @@ module "cw_event_trigger_batch_role" {
 }
 
 module "secretsmanager_secrets" {
-  source = "./terraform/modules/secretsmanager_secrets"
+  source = "./terraform/modules/secretsmanager"
 
   env      = var.env
   nickname = var.nickname
@@ -112,7 +112,7 @@ module "submit_batch_job_event" {
   rule_name           = "submit-batch-job-rule"
   rule_description    = "Submit a Batch job as scheduled"
   schedule_expression = var.schedule_expression
-  is_enabled          = true
+  is_enabled          = false
   # rule target
   target_arn                      = module.batch.batch_job_queue.id
   target_id                       = "submitBatchJob"
