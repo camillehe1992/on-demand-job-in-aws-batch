@@ -26,6 +26,9 @@ env:
   NICKNAME: helloworld
   TF_VERSION: 1.3.4
 
+  # Secret tokens injected into application
+  VF_VAR
+
 jobs:
   terraform-plan:
     name: Terraform Plan
@@ -60,7 +63,7 @@ jobs:
       - name: Terraform Init
         run: |
           terraform init -reconfigure \
-          -backend-config=terraform/environments/dev/config.tfbackend \
+          -backend-config=terraform/environments/$ENVIRONMENT/config.tfbackend \
           -backend-config="key=$NICKNAME/$ENVIRONMENT/$AWS_REGION/terraform.tfstate"
 
       # Checks that all Terraform configuration files adhere to a canonical format
@@ -139,7 +142,7 @@ jobs:
       - name: Terraform Init
         run: |
           terraform init -reconfigure \
-          -backend-config="terraform/environments/$ENVIRONMENT/config.tfbackend" \
+          -backend-config=terraform/environments/$ENVIRONMENT/config.tfbackend \
           -backend-config="key=$NICKNAME/$ENVIRONMENT/$AWS_REGION/terraform.tfstate"
 
       # Download saved plan from artifacts

@@ -104,6 +104,13 @@ variable "log_level" {
   description = "The log level of the job container"
 }
 
+# Secret variables are injected in runtime
+# NEVER EVER save secret in source code
+variable "my_secret" {
+  type        = string
+  description = "A placeholder for a secret token saved in Secret Manager"
+}
+
 # CloudWatch Event(EventBridge) Variables
 variable "schedule_expression" {
   type        = string

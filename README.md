@@ -21,15 +21,18 @@ All AWS infrastructure is created and maintained using Terraform. The Terraform 
 
 ```bash
 .
-├── config.tfbackend  # Remote backend config file
-├── data.tf           # File for Terraform data source 
-├── main.tf           # The reference of modules
-├── outputs.tf        # The outputs of Terraform resources
-├── terraform         
-│   ├── environments           # Environment specified variables
-│   └── modules       # Terraform modules
-├── variables.tf      # Terraform input variables that should be passed to the arch module
-└── versions.tf       # Defines the versions of Terraform and providers
+├── config.tfbackend              # Remote backend config file
+├── data.tf                       # File for Terraform data source 
+├── main.tf                       # The reference of modules
+├── outputs.tf                    # The outputs of Terraform resources
+├── terraform
+│   ├── environments
+│   │   └── dev
+│   │       ├── config.tfbackend  # Terraform remote backend config
+│   │       └── terraform.tfvars  # Terraform environment variables
+│   └── modules                   # Terraform modules
+├── variables.tf                  # Terraform input variables that should be passed to the arch module
+└── versions.tf                   # Defines the versions of Terraform and providers
 ```
 
 ## Deploy/Destory Terraform Infrastructure
@@ -38,7 +41,7 @@ All AWS infrastructure is created and maintained using Terraform. The Terraform 
 make apply
 
 # destroy Terraform infrastructure
-make destroy
+make apply-destroy
 ```
 
 ## Submit Batch Job Manually
@@ -47,15 +50,14 @@ Currently, the Batch job is submitted/triggered by CloudWatch Event (EventBridge
 > Don't forget to update job definition revision in `--job-definition` if you have a new revision created. Only the latest revision is ACTIVE.
 
 ```bash
-# Setup AWS_PROFILE with permission to submit batch job
-export AWS_PROFILE=service.app-deployment-dev-ci-bot
-
 # Submit a job using CLI
 aws batch submit-job \
   --job-name triggered-via-cli \
   --job-definition arn:aws-cn:batch:cn-north-1:756143471679:job-definition/dev-helloworld-jd:4 \
-  --job-queue arn:aws-cn:batch:cn-north-1:756143471679:job-queue/dev-helloworld-jq
+  --job-queue arn:aws-cn:batch:cn-north-1:756143471679:job-queue/dev-helloworld-jq \
+  --profile service.app-deployment-dev-ci-bot
 ```
+
 After submitted successfully, go to AWS Console -> Batch -> Jobs. Select the target job queue from the dropdown list, then your new submitted job will be listed on the top. It will spend a few minutes for a job to complete, according to the job processing time, and whether you allocate an EC2 instance resource in advance by giving variable `desired_vcpus` a number greater than 0 or not. If the job failed, an email notification will be sent out to the Topic subscribers you provided in variable `notification_email_addresses`.
 
 As designed, we keep the `desired_vcpus` as `0` as default for saving cost, which means a new EC2 instance will be launched when a new job is submitted and shut down immediately after completed. The screenshot below shows the latest job that submitted by CloudWatch Event (EventBridge) at 04:00 AM (UTC).
