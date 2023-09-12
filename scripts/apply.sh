@@ -15,7 +15,7 @@ else
     PLAN=""
 fi
 
-BACKEND_CONFIG="$DIR/config.tfbackend"
+BACKEND_CONFIG="$DIR/terraform/environments/$ENVIRONMENT/config.tfbackend"
 TF_VAR_FILE="$DIR/terraform/environments/$ENVIRONMENT/terraform.tfvars"
 
 terraform init -reconfigure \
