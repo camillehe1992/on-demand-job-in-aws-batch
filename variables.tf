@@ -27,6 +27,7 @@ variable "tags" {
 
 # SecretManager Secrets
 # SECRETS ARE INJECTED AS TF_VAR_XXX. NEVER EVER SET A VALUE FOR SECRET HERE
+# https://developer.hashicorp.com/terraform/cli/config/environment-variables#tf_var_name
 variable "my_secret" {
   type        = string
   description = "The secret"
@@ -102,13 +103,6 @@ variable "resource_requirements_mem" {
 variable "log_level" {
   type        = string
   description = "The log level of the job container"
-}
-
-# Secret variables are injected in runtime
-# NEVER EVER save secret in source code
-variable "my_secret" {
-  type        = string
-  description = "A placeholder for a secret token saved in Secret Manager"
 }
 
 # CloudWatch Event(EventBridge) Variables
