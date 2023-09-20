@@ -1,3 +1,9 @@
+#########################################################################
+# Terraform Makefile
+#########################################################################
+-include .env
+
+SHELL := /bin/bash
 BASE := $(shell /bin/pwd)
 PIP ?= pip
 TF ?= terraform
@@ -5,10 +11,9 @@ MAKE ?= make
 
 ENVIRONMENT = dev
 NICKNAME = helloworld
-AWS_REGION=cn-north-1
+AWS_REGION = cn-north-1
 
-export AWS_PROFILE=service.app-deployment-dev-ci-bot
-export TF_VAR_my_secret=replace_me
+AWS_PROFILE := service.app-deployment-${ENVIRONMENT}-ci-bot
 
 install:
 	$(info [*] Enable Git Commit Hook & Install project dependencies)
@@ -28,7 +33,10 @@ init:
 
 plan: init
 	$(info [*] Plan Terrafrom Infra)
-	@$(TF) plan -var-file terraform/environments/$(ENVIRONMENT)/terraform.tfvars -out tfplan
+	echo MY_SECRET ${MY_SECRET}
+	@$(TF) plan -var-file terraform/environments/$(ENVIRONMENT)/terraform.tfvars \
+		-var="my_secret=${MY_SECRET}" \
+		-out tfplan
 
 plan-destroy: init
 	$(info [*] Plan Terrafrom Infra - Destroy)
