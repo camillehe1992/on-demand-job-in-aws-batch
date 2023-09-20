@@ -2,8 +2,7 @@
 # GENERAL INFORMATION
 ##############################################
 
-aws_region  = "cn-north-1"
-aws_profile = "service.app-deployment-dev-ci-bot"
+aws_region = "cn-north-1"
 
 env      = "dev"
 nickname = "helloworld"

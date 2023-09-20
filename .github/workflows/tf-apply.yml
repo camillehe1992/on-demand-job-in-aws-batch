@@ -77,7 +77,7 @@ jobs:
         id: tf-plan
         run: |
           export exitcode=0
-          echo $MY_SECRET
+          
           terraform plan \
           -var="my_secret=$MY_SECRET" \
           -var-file=terraform/environments/$ENVIRONMENT/terraform.tfvars \
