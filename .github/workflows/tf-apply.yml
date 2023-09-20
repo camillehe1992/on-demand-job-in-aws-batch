@@ -77,9 +77,9 @@ jobs:
         id: tf-plan
         run: |
           export exitcode=0
-          terraform plan -var-file=terraform/environments/$ENVIRONMENT/terraform.tfvars \
-		        -var="my_secret=$MY_SECRET" \
-            -detailed-exitcode -no-color -out tfplan || export exitcode=$?
+          terraform plan -var-file=terraform/environments/$ENVIRONMENT/terraform.tfvars 
+          -var="my_secret=$MY_SECRET" \
+          -detailed-exitcode -no-color -out tfplan || export exitcode=$?
 
           echo "exitcode=$exitcode" >> $GITHUB_OUTPUT
 
