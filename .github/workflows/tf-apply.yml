@@ -27,7 +27,7 @@ env:
   TF_VERSION: 1.3.4
 
   # Secret tokens injected into application
-  MY_SECRET: "${{ secrets.TF_VAR_MY_SECRET }}"
+  TF_VAR_MY_SECRET: "${{ secrets.TF_VAR_MY_SECRET }}"
 
 jobs:
   terraform-plan:
@@ -79,7 +79,7 @@ jobs:
           export exitcode=0
           
           terraform plan \
-          -var="my_secret=$MY_SECRET" \
+          -var="my_secret=$TF_VAR_MY_SECRET" \
           -var-file=terraform/environments/$ENVIRONMENT/terraform.tfvars \
           -detailed-exitcode -no-color -out tfplan || export exitcode=$?
 
