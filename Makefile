@@ -33,7 +33,6 @@ init:
 
 plan: init
 	$(info [*] Plan Terrafrom Infra)
-	echo MY_SECRET ${MY_SECRET}
 	@$(TF) plan -var-file terraform/environments/$(ENVIRONMENT)/terraform.tfvars \
 		-var="aws_profile=${AWS_PROFILE}" \
 		-var="my_secret=${MY_SECRET}" \
