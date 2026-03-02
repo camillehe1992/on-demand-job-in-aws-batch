@@ -1,3 +1,4 @@
-region         = "cn-north-1"
-bucket         = "tf-state-756143471679-cn-north-1"
-profile        = "service.app-deployment-dev-ci-bot"
+region         = "ap-southeast-1"
+bucket         = "terraform-state-824709318323-ap-southeast-1"
+encrypt        = true
+key = "on-demand-job-in-aws-batch/dev/ap-southeast-1/terraform.tfstate"

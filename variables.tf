@@ -3,11 +3,17 @@
 variable "aws_region" {
   type        = string
   description = "AWS region"
+
+  validation {
+    condition     = can(regex("^[a-z]{2}-[a-z]+-[0-9]$", var.aws_region))
+    error_message = "AWS region must be in valid format (e.g., us-east-1, ap-southeast-1)."
+  }
 }
 
 variable "aws_profile" {
   type        = string
-  default     = "default"
+  default     = null
+  nullable    = true
   description = "AWS profile which is used for the deployment"
 }
 
@@ -32,6 +38,7 @@ variable "tags" {
 variable "my_secret" {
   type        = string
   description = "The secret"
+  default     = "REPLACE_ME"
 }
 
 # Batch Variables
@@ -115,4 +122,11 @@ variable "schedule_expression" {
 variable "notification_email_addresses" {
   type        = list(string)
   description = "The list of email address that subscribes the SNS topic to receive notification"
+
+  validation {
+    condition = alltrue([
+      for email in var.notification_email_addresses : can(regex("^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$", email))
+    ])
+    error_message = "All notification_email_addresses must be valid email addresses."
+  }
 }

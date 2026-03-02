@@ -53,8 +53,8 @@ Currently, the Batch job is submitted/triggered by CloudWatch Event (EventBridge
 # Submit a job using CLI
 aws batch submit-job \
   --job-name triggered-via-cli \
-  --job-definition arn:aws-cn:batch:cn-north-1:756143471679:job-definition/dev-helloworld-jd:4 \
-  --job-queue arn:aws-cn:batch:cn-north-1:756143471679:job-queue/dev-helloworld-jq \
+  --job-definition arn:aws-cn:batch:ap-southeast-1:756143471679:job-definition/dev-helloworld-jd:4 \
+  --job-queue arn:aws-cn:batch:ap-southeast-1:756143471679:job-queue/dev-helloworld-jq \
   --profile service.app-deployment-dev-ci-bot
 ```
 

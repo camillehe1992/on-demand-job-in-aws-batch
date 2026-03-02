@@ -2,7 +2,7 @@
 # GENERAL INFORMATION
 ##############################################
 
-aws_region = "cn-north-1"
+aws_region = "ap-southeast-1"
 
 env      = "dev"
 nickname = "helloworld"

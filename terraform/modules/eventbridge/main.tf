@@ -1,3 +1,8 @@
+locals {
+  is_batch_target = var.target_id == "submitBatchJob"
+  is_sns_target   = var.target_id == "sendToSNS"
+}
+
 resource "aws_cloudwatch_event_rule" "event_rule" {
   name                = "${var.env}-${var.nickname}-${var.rule_name}"
   description         = var.rule_description
@@ -10,7 +15,7 @@ resource "aws_cloudwatch_event_rule" "event_rule" {
 }
 
 resource "aws_cloudwatch_event_target" "event_target" {
-  count    = var.target_id == "submitBatchJob" ? 1 : 0
+  count    = local.is_batch_target ? 1 : 0
   rule     = aws_cloudwatch_event_rule.event_rule.name
   arn      = var.target_arn
   role_arn = var.role_arn
@@ -23,7 +28,7 @@ resource "aws_cloudwatch_event_target" "event_target" {
 }
 
 resource "aws_cloudwatch_event_target" "job_failed_event_target" {
-  count = var.target_id == "sendToSNS" ? 1 : 0
+  count = local.is_sns_target ? 1 : 0
   rule  = aws_cloudwatch_event_rule.event_rule.name
   arn   = var.target_arn
 
