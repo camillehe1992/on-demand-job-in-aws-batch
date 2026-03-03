@@ -8,9 +8,8 @@ BASE := $(shell /bin/pwd)
 PIP ?= pip
 MAKE ?= make
 
-ENVIRONMENT = dev
-NICKNAME = on-demand-job-in-aws-batch
-AWS_REGION = ap-southeast-1
+ENVIRONMENT := dev
+UNIT := iam
 AWS_PROFILE := app-deployer
 
 TF_BACKEND_CONFIG_FILE = terraform/environments/$(ENVIRONMENT)/config.tfbackend
