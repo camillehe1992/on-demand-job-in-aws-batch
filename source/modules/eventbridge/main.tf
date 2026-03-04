@@ -1,11 +1,10 @@
 locals {
   is_batch_target = var.target_id == "submitBatchJob"
   is_sns_target   = var.target_id == "sendToSNS"
-  resource_prefix = "${var.resource_prefix}-${var.rule_name}"
 }
 
 resource "aws_cloudwatch_event_rule" "event_rule" {
-  name                = local.resource_prefix
+  name                = var.rule_name
   description         = var.rule_description
   schedule_expression = var.schedule_expression
   event_pattern       = var.event_pattern

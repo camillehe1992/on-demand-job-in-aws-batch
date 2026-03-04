@@ -12,6 +12,8 @@ PROJECT_ROOT := `pwd`
 # Shell to use
 set shell := ["bash", "-uc"]
 
+#export TF_PLUGIN_CACHE_DIR := "~/.terraform.d/plugin-cache"
+
 # ------------------------------------------------------------------------------
 # Helper functions (as recipes)
 # ------------------------------------------------------------------------------

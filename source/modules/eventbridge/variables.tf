@@ -3,12 +3,7 @@ variable "tags" {
   type        = map(string)
   description = "The key value pairs we want to apply as tags to the resources contained in this module"
 }
-# Event rule
-variable "resource_prefix" {
-  type        = string
-  description = "The prefix of resource name"
-}
-
+# Event rule variables
 variable "rule_name" {
   type        = string
   description = "The name of EventBridge rule to trigger a submit of job"

@@ -1,11 +1,23 @@
 module "job_failed_alert_sns_topic" {
-  source   = "./terraform/modules/sns"
-  env      = var.env
-  nickname = var.nickname
-  tags     = var.tags
+  source = "../../modules/sns_topic"
 
-  topic_name                   = "job-failed-alert"
+  topic_name                   = "${local.resource_prefix}-job-failed-alert"
   notification_email_addresses = var.notification_email_addresses
+  sns_topic_policy             = data.aws_iam_policy_document.sns_topic_policy.json
 
-  sns_topic_policy = data.aws_iam_policy_document.sns_topic_policy.json
+  tags = var.tags
+}
+
+data "aws_iam_policy_document" "sns_topic_policy" {
+  statement {
+    effect  = "Allow"
+    actions = ["SNS:Publish"]
+
+    principals {
+      type        = "Service"
+      identifiers = ["events.amazonaws.com"]
+    }
+
+    resources = ["*"]
+  }
 }

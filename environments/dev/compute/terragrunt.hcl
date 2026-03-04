@@ -19,7 +19,6 @@ locals {
   unit_tags = {
     Unit = basename(get_terragrunt_dir())
   }
-  # current_region = include.root.locals.current_region
   application_name = include.common.locals.application_name
   env = include.env.locals.env
   tags = merge(
@@ -37,12 +36,11 @@ inputs = {
   tags     = local.tags
   
   # Batch compute environment
-  instance_type      = local.config.instance_types[0]
+  instance_types      = local.config.instance_types
   max_vcpus          = local.config.max_vcpus
   min_vcpus          = local.config.min_vcpus
   desired_vcpus      = local.config.desired_vcpus
   vpc_id             = local.network_config.vpc_id
-  # subnet_ids         = local.network_config.public_subnet_ids
   security_group_ids = local.network_config.security_group_ids
   
   # Job definition
@@ -53,17 +51,13 @@ inputs = {
   job_image                  = "public.ecr.aws/amazonlinux/amazonlinux:latest"
   resource_requirements_vcpu = "1"
   resource_requirements_mem  = "128"
-  environment = {
-    LOG_LEVEL = "debug"
-  }
+  environment = []
   
   # Dependencies
   instance_role_arn  = dependency.security.outputs.batch_instance_role_arn
   job_role_arn       = dependency.security.outputs.batch_execution_role_arn
   execution_role_arn = dependency.security.outputs.batch_execution_role_arn
-  secrets = {
-    # MY_SECRET = dependency.security.outputs.secrets.my_secret.arn
-  }
+  secrets = []
 }
 
 # Dependencies

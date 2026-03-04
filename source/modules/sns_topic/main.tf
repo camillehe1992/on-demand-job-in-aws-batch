@@ -1,8 +1,8 @@
 # Send email notification with presigned url via SNS topic
 resource "aws_sns_topic" "notification_topic" {
-  name              = "${var.env}-${var.nickname}-${var.topic_name}"
-  kms_master_key_id = aws_kms_key.sns_key.id # 启用服务器端加密
-  delivery_policy   = <<EOF
+  name = var.topic_name
+  # kms_master_key_id = aws_kms_key.sns_key.id # 启用服务器端加密
+  delivery_policy = <<EOF
 {
   "http": {
     "defaultHealthyRetryPolicy": {
@@ -21,23 +21,7 @@ resource "aws_sns_topic" "notification_topic" {
   }
 }
 EOF
-  tags              = var.tags
-}
-
-# 创建KMS密钥用于SNS加密
-resource "aws_kms_key" "sns_key" {
-  description             = "KMS key for ${var.env}-${var.nickname} SNS topic encryption"
-  deletion_window_in_days = 7
-  enable_key_rotation     = true
-
-  tags = merge(var.tags, {
-    Name = "${var.env}-${var.nickname}-sns-key"
-  })
-}
-
-resource "aws_kms_alias" "sns_key_alias" {
-  name          = "alias/${var.env}-${var.nickname}-sns"
-  target_key_id = aws_kms_key.sns_key.key_id
+  tags            = var.tags
 }
 
 resource "aws_sns_topic_subscription" "trigger_topic_emails" {

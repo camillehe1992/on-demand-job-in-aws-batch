@@ -15,53 +15,37 @@ include "env" {
   expose = true
 }
 
-inputs = {
-  current_region = include.root.locals.current_region
+locals {
+  unit_tags = {
+    Unit = basename(get_terragrunt_dir())
+  }
+  application_name = include.common.locals.application_name
   env = include.env.locals.env
-  tags = merge(include.common.locals.common_tags, include.env.locals.environment_tags)
+  tags = merge(
+    include.common.locals.common_tags,
+    include.env.locals.environment_tags, 
+    local.unit_tags)
+}
+
+inputs = {
+  application_name = local.application_name
+  env      = local.env
+  tags     = local.tags
   
-  # Scheduled job trigger
-  rule_name           = "submit-batch-job-rule"
-  rule_description    = "Submit a Batch job as scheduled"
-  schedule_expression = "cron(0 4 * * ? *)"  # 4 AM UTC daily
-  is_enabled          = false
-  target_arn                      = dependency.batch.outputs.batch_job_queue.id
-  target_id                       = "submitBatchJob"
-  role_arn                        = dependency.iam.outputs.cw_event_trigger_batch_role_arn
-  batch_target_job_definition_arn = dependency.batch.outputs.batch_job_definition.arn
-  job_name                        = "triggered-via-eventbridge"
-  rule_input                      = "{}"
-  
-  # Job failure monitoring
-  event_rule_name        = "capture_failed_batch_job_rule"
-  event_rule_description = "Register an event rule that captures only job-failed events"
-  event_pattern = jsonencode({
-    "detail-type" : [
-      "Batch Job State Change"
-    ],
-    "source" : [
-      "aws.batch"
-    ],
-    "detail" : {
-      "jobDefinition" : [dependency.batch.outputs.batch_job_definition.arn]
-      "status" : [
-        "FAILED"
-      ]
-    }
-  })
-  event_target_arn = dependency.sns.outputs.sns_topic_arn
-  event_target_id  = "sendToSNS"
+  # EventBridge
+  notification_email_addresses = ["camille.he@outlook.com"]
+
+  # Dependencies
+  batch_job_queue_arn = dependency.compute.outputs.batch_job_queue_arn
+  eventbridge_role_arn = dependency.security.outputs.eventbridge_role_arn
+  batch_job_definition_arn = dependency.compute.outputs.batch_job_definition_arn
 }
 
 # Dependencies
-dependency "iam" {
-  config_path = "../iam"
+dependency "security" {
+  config_path = "../security"
 }
 
-dependency "batch" {
-  config_path = "../batch"
-}
-
-dependency "sns" {
-  config_path = "../sns"
+dependency "compute" {
+  config_path = "../compute"
 }

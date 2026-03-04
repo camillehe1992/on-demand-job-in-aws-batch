@@ -15,7 +15,7 @@ variable "tags" {
 }
 
 # Batch compute environment
-variable "instance_type" {
+variable "instance_types" {
   type        = set(string)
   description = "A list of instance type that launched in batch compute environment"
 }
@@ -105,23 +105,21 @@ variable "mount_points" {
 }
 
 variable "environment" {
-  type = map(object({
+  type = list(object({
     name  = string
     value = string
   }))
   description = "The environment variables to pass to a container."
-  nullable    = true
-  default     = {}
+  default     = []
 }
 
 variable "secrets" {
-  type = map(object({
+  type = list(object({
     name      = string
     valueFrom = string
   }))
-  description = "TThe secrets for the container."
-  nullable    = true
-  default     = {}
+  description = "The secrets for the container."
+  default     = []
 }
 
 # Dependencies

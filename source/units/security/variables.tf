@@ -1,13 +1,13 @@
 
 # General deployment variables
-variable "env" {
-  type        = string
-  description = "The environment of application"
-}
-
 variable "application_name" {
   type        = string
   description = "The name of application. Must be lowercase without special chars"
+}
+
+variable "env" {
+  type        = string
+  description = "The environment of application"
 }
 
 variable "tags" {
