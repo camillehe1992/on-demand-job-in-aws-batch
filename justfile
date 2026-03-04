@@ -32,12 +32,12 @@ aws-profile:
 # Terragrunt unit directory
 tg-unit-dir ENVIRONMENT UNIT:
     #!/usr/bin/env bash
-    echo "{{PROJECT_ROOT}}/terragrunt/environments/{{ENVIRONMENT}}/{{UNIT}}/"
+    echo "{{PROJECT_ROOT}}/environments/{{ENVIRONMENT}}/{{UNIT}}/"
 
 # Terragrunt environment directory
 tg-env-dir ENVIRONMENT:
     #!/usr/bin/env bash
-    echo "{{PROJECT_ROOT}}/terragrunt/environments/{{ENVIRONMENT}}/"
+    echo "{{PROJECT_ROOT}}/environments/{{ENVIRONMENT}}/"
 
 # ------------------------------------------------------------------------------
 # Core commands
@@ -75,7 +75,7 @@ apply ENVIRONMENT UNIT:
     TG_DIR=$(just tg-unit-dir {{ENVIRONMENT}} {{UNIT}})
     
     echo "[*] Terragrunt applying {{ENVIRONMENT}}/{{UNIT}}"
-    cd ${TG_DIR} && AWS_PROFILE=${PROFILE} terragrunt apply
+    cd ${TG_DIR} && AWS_PROFILE=${PROFILE} terragrunt apply --auto-approve
 
 # Terragrunt destroy
 destroy ENVIRONMENT UNIT:
@@ -84,7 +84,7 @@ destroy ENVIRONMENT UNIT:
     TG_DIR=$(just tg-unit-dir {{ENVIRONMENT}} {{UNIT}})
     
     echo "[*] Terragrunt destroying {{ENVIRONMENT}}/{{UNIT}}"
-    cd ${TG_DIR} && AWS_PROFILE=${PROFILE} terragrunt destroy
+    cd ${TG_DIR} && AWS_PROFILE=${PROFILE} terragrunt destroy --auto-approve
 
 # Terragrunt output
 output ENVIRONMENT UNIT:
@@ -186,8 +186,8 @@ list:
 clean:
     echo "[*] Cleaning up temporary files"
     find {{PROJECT_ROOT}} -type d -name ".terragrunt-cache" -exec rm -rf {} + 2>/dev/null || true
-    find {{PROJECT_ROOT}} -type d -name ".terraform" -exec rm -rf {} + 2>/dev/null || true
-    find {{PROJECT_ROOT}} -type f -name "*.tfstate*" -delete
+    # find {{PROJECT_ROOT}} -type d -name ".terraform" -exec rm -rf {} + 2>/dev/null || true
+    # find {{PROJECT_ROOT}} -type f -name "*.tfstate*" -delete
 
 # Validate justfile syntax
 check:
