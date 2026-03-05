@@ -16,6 +16,7 @@ variable "tags" {
   default     = {}
 }
 
+# Unit-specific variables
 variable "secret_specs" {
   type = map(object({
     description   = string

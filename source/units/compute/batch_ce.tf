@@ -9,7 +9,7 @@ resource "aws_batch_compute_environment" "compute_environment" {
     min_vcpus     = var.min_vcpus
     desired_vcpus = var.desired_vcpus
 
-    subnets            = tolist(data.aws_subnets.public_subnets.ids)
+    subnets            = var.subnet_ids
     security_group_ids = var.security_group_ids
 
     type                = "EC2"

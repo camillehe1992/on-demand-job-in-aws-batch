@@ -43,10 +43,10 @@ variable "vpc_id" {
   description = "The VPC ID that the compute environment is in."
 }
 
-# variable "subnet_ids" {
-#   type        = list(string)
-#   description = "Subnet ids that Batch job runs in"
-# }
+variable "subnet_ids" {
+  type        = list(string)
+  description = "Subnet ids that Batch job runs in"
+}
 
 variable "security_group_ids" {
   type        = list(string)
@@ -123,7 +123,7 @@ variable "secrets" {
 }
 
 # Dependencies
-variable "instance_role_arn" {
+variable "batch_instance_role_arn" {
   type        = string
   description = "The ARN of the IAM role that the container can assume for AWS permissions."
 }
@@ -133,7 +133,7 @@ variable "job_role_arn" {
   description = "The ARN of the IAM role that the container can assume for AWS permissions."
 }
 
-variable "execution_role_arn" {
+variable "job_execution_role_arn" {
   type        = string
-  description = "The ARN of the execution role that AWS Batch can assume."
+  description = "The ARN of the Batch job execution role that AWS Batch can assume."
 }

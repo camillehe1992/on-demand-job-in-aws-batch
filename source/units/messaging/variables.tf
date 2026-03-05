@@ -14,11 +14,50 @@ variable "tags" {
   default     = {}
 }
 
-# Scheduled job trigger
+variable "submit_job_enabled" {
+  type        = bool
+  description = "Enable submit Batch job event rule"
+  default     = true
+}
+
 variable "schedule_expression" {
   type        = string
   description = "The schedule expression for CW Event rule in UTC. Trigger at 1:00 AM at UTC"
   default     = "cron(0 4 * * ? *)"
+}
+
+variable "eventbridge_role_arn" {
+  type        = string
+  description = "The ARN of IAM role to be used for this target when the rule is triggered"
+  validation {
+    condition     = can(regex("^arn:[^:]+:[^:]+:[^:]*:[^:]*:.*$", var.eventbridge_role_arn))
+    error_message = "The ARN must be in a valid format: arn:partition:service:region:account:resource"
+  }
+  nullable = true
+}
+
+variable "batch_job_definition_arn" {
+  type        = string
+  description = "The ARN of Batch job definition"
+  validation {
+    condition     = can(regex("^arn:[^:]+:[^:]+:[^:]*:[^:]*:.*$", var.batch_job_definition_arn))
+    error_message = "The ARN must be in a valid format: arn:partition:service:region:account:resource"
+  }
+}
+
+variable "batch_job_queue_arn" {
+  type        = string
+  description = "The ARN of Batch job queue"
+  validation {
+    condition     = can(regex("^arn:[^:]+:[^:]+:[^:]*:[^:]*:.*$", var.batch_job_queue_arn))
+    error_message = "The ARN must be in a valid format: arn:partition:service:region:account:resource"
+  }
+}
+
+variable "failed_job_notification_enabled" {
+  type        = bool
+  description = "Enable job failed notification SNS Topic email subscription"
+  default     = false
 }
 
 variable "notification_email_addresses" {
@@ -32,19 +71,4 @@ variable "notification_email_addresses" {
     ])
     error_message = "notification_email_addresses must be a list of valid email addresses"
   }
-}
-
-variable "batch_job_definition_arn" {
-  type        = string
-  description = "The ARN of Batch job definition"
-}
-
-variable "batch_job_queue_arn" {
-  type        = string
-  description = "The ARN of Batch job queue"
-}
-
-variable "eventbridge_role_arn" {
-  type        = string
-  description = "The ARN of IAM role to be used for this target when the rule is triggered"
 }

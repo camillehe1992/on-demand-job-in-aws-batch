@@ -35,7 +35,7 @@ resource "aws_batch_job_definition" "batch_job_definition" {
     command          = var.command
     image            = var.job_image
     jobRoleArn       = var.job_role_arn
-    executionRoleArn = var.execution_role_arn
+    executionRoleArn = var.job_execution_role_arn
 
     resourceRequirements = [
       {

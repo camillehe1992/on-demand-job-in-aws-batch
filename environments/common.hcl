@@ -19,8 +19,8 @@ locals {
   # Common network configuration
   network_config = {
     vpc_id             = "vpc-02fd20cf215e9a54b"  # Replace with your VPC ID
-    private_subnet_ids = ["subnet-04839c488f31e2829", "subnet-08122d3fc6e3ce9b1"]
-    # public_subnet_ids  = ["subnet-public1", "subnet-public2"]
+    private_subnet_ids = ["subnet-05caf66e740964d47", "subnet-0ac7236fe344b9a9c", "subnet-0a81c8b4c0bf960bb"]
+    public_subnet_ids  = ["subnet-05caf66e740964d47", "subnet-0ac7236fe344b9a9c", "subnet-0a81c8b4c0bf960bb"]
     security_group_ids = ["sg-0579f97438569f812"]
   }
 }
