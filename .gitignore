@@ -171,6 +171,7 @@ cython_debug/
 *.tfstate
 *.tfstate.*
 *.tfplan
+**/terraform.plan
 *.tfvars.json
 override.tf
 override.tf.json
