@@ -21,10 +21,11 @@ set shell := ["bash", "-uc"]
 # Get AWS profile from .env or fallback to "app-deployer"
 aws-profile:
     #!/usr/bin/env bash
-    # Check if running in GitHub Actions with OIDC
-    if [ -n "$GITHUB_ACTIONS" ] && [ -n "$ACTIONS_ID_TOKEN_REQUEST_TOKEN" ]; then
-        echo "github-actions-oidc"
-    # Fall back to local profile
+    # Check if running in GitHub Actions
+    if [ -n "$GITHUB_ACTIONS" ]; then
+        # In GitHub Actions with OIDC, we don't use named profiles
+        # The credentials are already set by configure-aws-credentials
+        echo ""
     elif [ -f .env ]; then
         source .env && echo "${AWS_PROFILE:-app-deployer}"
     else
