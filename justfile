@@ -138,7 +138,7 @@ plan-all ENVIRONMENT:
     TG_ENV_DIR=$(just tg-env-dir {{ENVIRONMENT}})
     
     echo "[*] Terragrunt run-all plan for {{ENVIRONMENT}}"
-    cd ${TG_ENV_DIR} && AWS_PROFILE=${PROFILE} terragrunt run-all plan
+    cd ${TG_ENV_DIR} && AWS_PROFILE=${PROFILE} terragrunt run --all plan
 
 # Run-all apply for entire environment
 apply-all ENVIRONMENT:
@@ -147,7 +147,7 @@ apply-all ENVIRONMENT:
     TG_ENV_DIR=$(just tg-env-dir {{ENVIRONMENT}})
     
     echo "[*] Terragrunt run-all apply for {{ENVIRONMENT}}"
-    cd ${TG_ENV_DIR} && AWS_PROFILE=${PROFILE} terragrunt run-all apply
+    cd ${TG_ENV_DIR} && AWS_PROFILE=${PROFILE} terragrunt run --all apply --non-interactive
 
 # Run-all destroy for entire environment
 destroy-all ENVIRONMENT:
@@ -156,8 +156,8 @@ destroy-all ENVIRONMENT:
     TG_ENV_DIR=$(just tg-env-dir {{ENVIRONMENT}})
     
     echo "[*] Terragrunt run-all destroy for {{ENVIRONMENT}}"
-    cd ${TG_ENV_DIR} && AWS_PROFILE=${PROFILE} terragrunt run-all destroy
-
+    cd ${TG_ENV_DIR} && AWS_PROFILE=${PROFILE} terragrunt run --all destroy 
+    
 # Run-all output for entire environment
 output-all ENVIRONMENT:
     #!/usr/bin/env bash
@@ -165,7 +165,7 @@ output-all ENVIRONMENT:
     TG_ENV_DIR=$(just tg-env-dir {{ENVIRONMENT}})
     
     echo "[*] Terragrunt run-all output for {{ENVIRONMENT}}"
-    cd ${TG_ENV_DIR} && AWS_PROFILE=${PROFILE} terragrunt run-all output
+    cd ${TG_ENV_DIR} && AWS_PROFILE=${PROFILE} terragrunt run --all output
 
 # Run-all validate for entire environment
 validate-all ENVIRONMENT:
@@ -174,7 +174,7 @@ validate-all ENVIRONMENT:
     TG_ENV_DIR=$(just tg-env-dir {{ENVIRONMENT}})
     
     echo "[*] Terragrunt run-all validate for {{ENVIRONMENT}}"
-    cd ${TG_ENV_DIR} && AWS_PROFILE=${PROFILE} terragrunt run-all validate
+    cd ${TG_ENV_DIR} && AWS_PROFILE=${PROFILE} terragrunt run --all validate
 
 # ------------------------------------------------------------------------------
 # Utility commands
@@ -188,16 +188,8 @@ list:
 clean:
     echo "[*] Cleaning up temporary files"
     find {{PROJECT_ROOT}} -type d -name ".terragrunt-cache" -exec rm -rf {} + 2>/dev/null || true
-    # find {{PROJECT_ROOT}} -type d -name ".terraform" -exec rm -rf {} + 2>/dev/null || true
-    # find {{PROJECT_ROOT}} -type f -name "*.tfstate*" -delete
-
-# Validate justfile syntax
-check:
-    just --fmt --check
-
-# Format justfile
-fmt-just:
-    just --fmt
+    find {{PROJECT_ROOT}} -type d -name ".terraform" -exec rm -rf {} + 2>/dev/null || true
+    find {{PROJECT_ROOT}} -type f -name "*.tfstate*" -delete
 
 # Show help
 help:
