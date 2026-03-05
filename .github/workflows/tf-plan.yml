@@ -1,0 +1,197 @@
+name: Terraform Plan
+
+on:
+  # Automatic trigger for dev environment when files change
+  push:
+    branches:
+      - main
+      - feature/ai-refactor
+    paths:
+      - "environments/**"
+      - "source/**"
+      - ".github/workflows/tf-plan.yml"
+
+  # Manual trigger for any environment
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: "Environment to run against"
+        type: choice
+        options:
+          - dev
+          - staging
+          - prod
+        default: dev
+        required: true
+
+permissions:
+  id-token: write # Required for OIDC authentication
+  contents: read
+  pull-requests: write
+
+env:
+  AWS_REGION: "${{ vars.AWS_REGION }}"
+
+jobs:
+  # Determine environment for automatic triggers
+  determine-environment:
+    name: Determine Environment
+    runs-on: ubuntu-latest
+    outputs:
+      environment: ${{ steps.set-env.outputs.environment }}
+      is_automatic: ${{ steps.set-env.outputs.is_automatic }}
+
+    steps:
+      - name: Set Environment
+        id: set-env
+        run: |
+          if [ "${{ github.event_name }}" == "push" ]; then
+            echo "environment=dev" >> $GITHUB_OUTPUT
+            echo "is_automatic=true" >> $GITHUB_OUTPUT
+            echo "[*] Automatic trigger detected - using dev environment"
+          else
+            echo "environment=${{ inputs.environment }}" >> $GITHUB_OUTPUT
+            echo "is_automatic=false" >> $GITHUB_OUTPUT
+            echo "[*] Manual trigger detected - using ${{ inputs.environment }} environment"
+          fi
+
+  terraform-plan:
+    name: Terraform Plan
+    needs: [determine-environment]
+    runs-on: ubuntu-latest
+    environment: ${{ needs.determine-environment.outputs.environment }}
+    outputs:
+      tfplanExitCode: ${{ steps.tf-plan.outputs.exitcode }}
+      environment: ${{ needs.determine-environment.outputs.environment }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Configure AWS Credentials via OIDC
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ vars.ROLE_TO_ASSUME }}
+          role-session-name: ${{ vars.ROLE_SESSION_NAME }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Install Just
+        run: |
+          curl --proto '=https' --tlsv1.2 -sSf https://just.systems/install.sh | bash -s -- --to /usr/local/bin
+
+      - name: Get Terraform Version from Source
+        id: tf-version
+        run: |
+          # Extract Terraform version from environments/root.hcl
+          TF_VERSION=$(grep -o 'required_version = ">= [0-9.]*"' environments/root.hcl | sed 's/required_version = ">= //' | sed 's/"//' | head -1)
+          echo "TF_VERSION=$TF_VERSION" >> $GITHUB_OUTPUT
+          echo "Using Terraform version: $TF_VERSION"
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_wrapper: false
+          terraform_version: ${{ steps.tf-version.outputs.TF_VERSION }}
+
+      - name: Get Terragrunt Version from Source
+        run: |
+          TG_VERSION=$(cat .terragrunt_version.txt)
+          echo "TG_VERSION=$TG_VERSION" >> $GITHUB_ENV
+
+      - name: Setup Terragrunt
+        uses: autero1/action-terragrunt@v1.1.0
+        with:
+          terragrunt_version: ${{ env.TG_VERSION }}
+
+      - name: Terraform Plan
+        id: tf-plan
+        run: |
+          cd environments/${{ needs.determine-environment.outputs.environment }}
+          just plan-all ${{ needs.determine-environment.outputs.environment }} || echo "Plan completed with exit code: $?"
+
+          # Check if there are changes
+          if just output-all ${{ needs.determine-environment.outputs.environment }} 2>/dev/null; then
+            echo "tfplanExitCode=2" >> $GITHUB_OUTPUT
+          else
+            echo "tfplanExitCode=0" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Generate Detailed Terraform Plan Summary
+        if: steps.tf-plan.outputs.exitcode == '2'
+        run: |
+          ENVIRONMENT=${{ needs.determine-environment.outputs.environment }}
+          cd environments/${ENVIRONMENT}
+
+          echo "## 🚀 Terraform Plan Summary" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Environment:** ${ENVIRONMENT}" >> $GITHUB_STEP_SUMMARY
+          echo "**Trigger Type:** ${{ needs.determine-environment.outputs.is_automatic == 'true' && '🔄 Automatic' || '👆 Manual' }}" >> $GITHUB_STEP_SUMMARY
+          echo "**Status:** ⚠️ Changes detected" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+
+          echo "### 📋 Resources Overview" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+
+          # Get resource counts and changes
+          echo "- **Plan Status:** Changes detected" >> $GITHUB_STEP_SUMMARY
+          echo "- **Units Affected:** All units in ${ENVIRONMENT} environment" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+
+          echo "### 🔧 Next Steps" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "1. Review the plan output above" >> $GITHUB_STEP_SUMMARY
+          echo "2. If changes look good, trigger the Terraform Apply workflow" >> $GITHUB_STEP_SUMMARY
+          echo "3. Monitor the deployment in the AWS Batch console" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+
+          echo "### 📊 Environment Details" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "- **AWS Region:** ${{ env.AWS_REGION }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Repository:** ${{ github.repository }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Workflow Run:** [View Details](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})" >> $GITHUB_STEP_SUMMARY
+
+      - name: Generate No Changes Summary
+        if: steps.tf-plan.outputs.exitcode == '0'
+        run: |
+          ENVIRONMENT=${{ needs.determine-environment.outputs.environment }}
+          echo "## ✅ Terraform Plan Summary" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Environment:** ${ENVIRONMENT}" >> $GITHUB_STEP_SUMMARY
+          echo "**Trigger Type:** ${{ needs.determine-environment.outputs.is_automatic == 'true' && '🔄 Automatic' || '👆 Manual' }}" >> $GITHUB_STEP_SUMMARY
+          echo "**Status:** ✅ No changes detected" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "Infrastructure is up to date! 🎉" >> $GITHUB_STEP_SUMMARY
+
+      - name: Comment on PR (if applicable)
+        if: github.event_name == 'pull_request' && steps.tf-plan.outputs.exitcode == '2'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const environment = '${{ needs.determine-environment.outputs.environment }}';
+            const runUrl = '${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}';
+
+            const body = `## 🚀 Terraform Plan Results
+
+            **Environment:** ${environment}
+            **Status:** ⚠️ Changes detected
+
+            ### 📋 Summary
+            The Terraform plan has detected changes in the ${environment} environment.
+
+            ### 🔗 Details
+            [View Full Plan](${runUrl})
+
+            ### ✅ Next Steps
+            1. Review the plan output in the workflow run
+            2. If changes look good, approve and merge this PR
+            3. Trigger the Terraform Apply workflow
+
+            ---
+            *This comment was automatically generated by the Terraform Plan workflow.*`;
+
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: body
+            });

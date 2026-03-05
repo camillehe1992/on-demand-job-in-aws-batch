@@ -21,7 +21,6 @@ permissions:
 env:
   AWS_REGION: "${{ vars.AWS_REGION }}"
   ENVIRONMENT: "${{ inputs.environment }}"
-  TG_VERSION: "0.82.4"
 
 jobs:
   terraform-plan:
@@ -60,7 +59,12 @@ jobs:
           terraform_wrapper: false
           terraform_version: ${{ steps.tf-version.outputs.TF_VERSION }}
 
-      - name: "Setup Terragrunt"
+      - name: Get Terragrunt Version from Source
+        run: |
+          TG_VERSION=$(cat .terragrunt_version.txt)
+          echo "TG_VERSION=$TG_VERSION" >> $GITHUB_ENV
+
+      - name: Setup Terragrunt
         uses: autero1/action-terragrunt@v1.1.0
         with:
           terragrunt_version: ${{ env.TG_VERSION }}
@@ -120,7 +124,12 @@ jobs:
           terraform_wrapper: false
           terraform_version: ${{ steps.tf-version.outputs.TF_VERSION }}
 
-      - name: "Setup Terragrunt"
+      - name: Get Terragrunt Version from Source
+        run: |
+          TG_VERSION=$(cat .terragrunt_version.txt)
+          echo "TG_VERSION=$TG_VERSION" >> $GITHUB_ENV
+
+      - name: Setup Terragrunt
         uses: autero1/action-terragrunt@v1.1.0
         with:
           terragrunt_version: ${{ env.TG_VERSION }}
