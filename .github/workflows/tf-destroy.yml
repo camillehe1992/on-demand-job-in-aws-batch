@@ -6,7 +6,7 @@ on:
       - main
     inputs:
       environment:
-        description: 'Environment to run against'
+        description: "Environment to run against"
         type: choice
         options:
           - dev

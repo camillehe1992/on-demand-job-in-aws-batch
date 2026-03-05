@@ -10,6 +10,6 @@ output "eventbridge_role_arn" {
   value = module.eventbridge_role.role_arn
 }
 
-# output "secrets" {
-#   value = module.secrets.secrets
-# }
+output "secrets" {
+  value = module.secrets.secrets
+}

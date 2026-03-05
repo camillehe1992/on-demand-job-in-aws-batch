@@ -1,6 +1,6 @@
 # justfile - Task runner for Terragrunt workflows
 # Usage: just [ENVIRONMENT] [UNIT] task
-# Example: just plan dev vpc plan
+# Example: just plan dev security
 
 # Default values (can be overridden)
 ENVIRONMENT := "dev"

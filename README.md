@@ -17,7 +17,7 @@ Workflow steps:
 2. Batch job is submitted using job definition into the job queue in AWS Batch by CloudWatch Event regularly as scheduled.
 3. AWS Batch launches an EC2 instance in computing environment, pulls the image from the image registry and create an container.
 4. The container should implement some tasks on your behave. An email notification will be triggered if the job is failed.
-5. After done, the container will be stopped and removed. EC2 Instance is shutdown automatically by AWS Batch. 
+5. After done, the container will be stopped and removed. EC2 Instance is shutdown automatically by AWS Batch.
 
 ## Terraform Structure
 
@@ -96,9 +96,9 @@ The logging data is saved to CloudWatch Logs automatically. You can find the log
 
 ## Reference
 
-1. https://docs.aws.amazon.com/batch/latest/userguide/what-is-batch.html
-2. https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/batch_compute_environment#compute_resources
-3. https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/sns_topic
-4. https://docs.aws.amazon.com/batch/latest/userguide/batch-cwe-target.html
-5. https://docs.aws.amazon.com/batch/latest/userguide/batch_sns_tutorial.html
-6. https://docs.aws.amazon.com/batch/latest/userguide/batch_cwe_events.html
+1. [AWS Batch - What is AWS Batch?](https://docs.aws.amazon.com/batch/latest/userguide/what-is-batch.html)
+2. [AWS Batch Compute Environment - compute_resources](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/batch_compute_environment#compute_resources)
+3. [AWS SNS - Topic](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/sns_topic)
+4. [AWS Batch - CloudWatch Event Target](https://docs.aws.amazon.com/batch/latest/userguide/batch-cwe-target.html)
+5. [AWS Batch - SNS Notification](https://docs.aws.amazon.com/batch/latest/userguide/batch_sns_tutorial.html)
+6. [AWS Batch - CloudWatch Event](https://docs.aws.amazon.com/batch/latest/userguide/batch_cwe_events.html)

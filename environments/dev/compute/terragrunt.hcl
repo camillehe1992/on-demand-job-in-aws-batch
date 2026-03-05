@@ -1,20 +1,5 @@
 # Batch module for development environment
 
-include "root" {
-  path = find_in_parent_folders("root.hcl")
-  expose = true
-}
-
-include "common" {
-  path = find_in_parent_folders("common.hcl")
-  expose = true
-}
-
-include "env" {
-  path = find_in_parent_folders("env.hcl")
-  expose = true
-}
-
 locals {
   unit_tags = {
     Unit = basename(get_terragrunt_dir())
@@ -30,13 +15,14 @@ locals {
   config = include.env.locals.config
 }
 
+# Unit-specific inputs
 inputs = {
   application_name = local.application_name
   env      = local.env
   tags     = local.tags
   
   # Batch compute environment
-  instance_types      = local.config.instance_types
+  instance_types     = local.config.instance_types
   max_vcpus          = local.config.max_vcpus
   min_vcpus          = local.config.min_vcpus
   desired_vcpus      = local.config.desired_vcpus
@@ -58,6 +44,22 @@ inputs = {
   job_role_arn       = dependency.security.outputs.batch_execution_role_arn
   execution_role_arn = dependency.security.outputs.batch_execution_role_arn
   secrets = []
+}
+
+# Include root/ common/ and env/ modules
+include "root" {
+  path = find_in_parent_folders("root.hcl")
+  expose = true
+}
+
+include "common" {
+  path = find_in_parent_folders("common.hcl")
+  expose = true
+}
+
+include "env" {
+  path = find_in_parent_folders("env.hcl")
+  expose = true
 }
 
 # Dependencies
