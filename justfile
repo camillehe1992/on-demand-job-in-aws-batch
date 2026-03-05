@@ -203,18 +203,6 @@ fmt-just:
 help:
     @just --list --unsorted
 
-# Show available units in an environment
-list-units ENVIRONMENT:
-    #!/usr/bin/env bash
-    echo "[*] Available units in {{ENVIRONMENT}}:"
-    ls -1 {{PROJECT_ROOT}}/terragrunt/environments/{{ENVIRONMENT}}/ | grep -v "account.hcl" | grep -v "terragrunt.hcl" || true
-
-# Show all environments
-list-envs:
-    #!/usr/bin/env bash
-    echo "[*] Available environments:"
-    ls -1 {{PROJECT_ROOT}}/terragrunt/environments/
-
 # Show current settings
 show-settings:
     #!/usr/bin/env bash
@@ -222,3 +210,97 @@ show-settings:
     echo "UNIT: {{UNIT}}"
     echo "PROJECT_ROOT: {{PROJECT_ROOT}}"
     echo "AWS_PROFILE: $(just aws-profile)"
+
+# Submit a batch job manually with job-name from terragrunt output
+submit-job ENVIRONMENT UNIT JOB_NAME:
+    #!/usr/bin/env bash
+    PROFILE=$(just aws-profile)
+    TG_DIR=$(just tg-unit-dir {{ENVIRONMENT}} {{UNIT}})
+    
+    echo "[*] Fetching job definition and job queue from terragrunt output"
+    cd ${TG_DIR}
+    
+    # Get job definition ARN from terragrunt output
+    JOB_DEFINITION=$(AWS_PROFILE=${PROFILE} terragrunt output -raw batch_job_definition_arn 2>/dev/null || echo "")
+    if [ -z "$JOB_DEFINITION" ]; then
+        echo "[!] Failed to get job definition ARN from terragrunt output"
+        echo "[*] Available outputs:"
+        AWS_PROFILE=${PROFILE} terragrunt output
+        exit 1
+    fi
+    
+    # Get job queue ARN from terragrunt output
+    JOB_QUEUE=$(AWS_PROFILE=${PROFILE} terragrunt output -raw batch_job_queue_arn 2>/dev/null || echo "")
+    if [ -z "$JOB_QUEUE" ]; then
+        echo "[!] Failed to get job queue ARN from terragrunt output"
+        echo "[*] Available outputs:"
+        AWS_PROFILE=${PROFILE} terragrunt output
+        exit 1
+    fi
+    
+    echo "[*] Submitting batch job with:"
+    echo "    Environment: {{ENVIRONMENT}}"
+    echo "    Unit: {{UNIT}}"
+    echo "    Job Name: {{JOB_NAME}}"
+    echo "    Job Definition: $JOB_DEFINITION"
+    echo "    Job Queue: $JOB_QUEUE"
+    
+    # Submit the batch job
+    echo "[*] Executing: aws batch submit-job --job-name {{JOB_NAME}} --job-definition $JOB_DEFINITION --job-queue $JOB_QUEUE"
+    AWS_PROFILE=${PROFILE} aws batch submit-job \
+        --job-name "{{JOB_NAME}}" \
+        --job-definition "$JOB_DEFINITION" \
+        --job-queue "$JOB_QUEUE"
+    
+    echo "[*] Batch job submitted successfully!"
+
+# ------------------------------------------------------------------------------
+# Documentation generation commands
+# ------------------------------------------------------------------------------
+
+# Generate documentation for all modules and units under source directory
+docs:
+    #!/usr/bin/env bash
+    echo "[*] Generating documentation for modules and units under source directory"
+    
+    # Check if terraform-docs is installed
+    if ! command -v terraform-docs &> /dev/null; then
+        echo "[!] terraform-docs is not installed. Installing..."
+        if [[ "$OSTYPE" == "darwin"* ]]; then
+            brew install terraform-docs
+        else
+            echo "[!] Please install terraform-docs manually: https://terraform-docs.io/user-guide/installation/"
+            exit 1
+        fi
+    fi
+    
+    # Generate docs for modules in source/modules/
+    echo "[*] Generating documentation for modules in source/modules/"
+    for module_dir in {{PROJECT_ROOT}}/source/modules/*/; do
+        if [ -d "$module_dir" ]; then
+            module_name=$(basename "$module_dir")
+            echo "  - Processing module: $module_name"
+            terraform-docs markdown "$module_dir" > "$module_dir/README.md" || echo "  [!] Failed to generate docs for $module_name"
+        fi
+    done
+    
+    # Generate docs for units in source/units/
+    echo "[*] Generating documentation for units in source/units/"
+    for unit_dir in {{PROJECT_ROOT}}/source/units/*/; do
+        if [ -d "$unit_dir" ]; then
+            unit_name=$(basename "$unit_dir")
+            echo "  - Processing unit: $unit_name"
+            terraform-docs markdown "$unit_dir" > "$unit_dir/README.md" || echo "  [!] Failed to generate docs for $unit_name"
+        fi
+    done
+    
+    echo "[*] Documentation generation completed!"
+
+# Clean up all generated documentation
+clean-docs:
+    #!/usr/bin/env bash
+    echo "[*] Cleaning up generated documentation"
+    find {{PROJECT_ROOT}}/source/modules -name "README.md" -delete
+    find {{PROJECT_ROOT}}/source/units -name "README.md" -delete
+    echo "[*] Documentation cleaned up!"
+
