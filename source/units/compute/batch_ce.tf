@@ -1,5 +1,11 @@
+resource "random_string" "resource_suffix" {
+  length  = 3
+  special = false
+  upper   = false
+}
+
 resource "aws_batch_compute_environment" "compute_environment" {
-  name = "${local.resource_prefix}-ce"
+  name = "${local.resource_prefix}-ce-${random_string.resource_suffix.result}"
 
   compute_resources {
     instance_type = var.instance_types

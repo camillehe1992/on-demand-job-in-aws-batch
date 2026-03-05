@@ -4,7 +4,6 @@
 inputs = {
   # Batch compute environment
   instance_types     = ["c5.large", "c5.xlarge", "c5.2xlarge"]
-  max_vcpus          = 16
   min_vcpus          = 0
   desired_vcpus      = 0
   
@@ -16,8 +15,6 @@ inputs = {
   job_image                  = "public.ecr.aws/amazonlinux/amazonlinux:latest"
   resource_requirements_vcpu = "1"
   resource_requirements_mem  = "128"
-  environment                = []
-  secrets                   = []
 }
 
 # Unit-specific locals

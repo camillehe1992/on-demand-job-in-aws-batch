@@ -1,7 +1,10 @@
 # Messaging unit configuration - shared across all environments
 
 # Unit-specific inputs for messaging resources
-inputs = {}
+inputs = {
+  # Email notifications
+  notification_email_addresses = ["camille.he@outlook.com"]
+}
 
 # Unit-specific locals
 locals {

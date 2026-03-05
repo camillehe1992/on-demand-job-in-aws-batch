@@ -35,10 +35,10 @@ terraform {
     commands = ["plan"]
     arguments = ["-parallelism=10", "-out=${get_terragrunt_dir()}/terraform.plan"]
   }
-  extra_arguments "apply" {
-    commands = ["apply"]
-    arguments = ["-parallelism=10", "${get_terragrunt_dir()}/terraform.plan"]
-  }
+  # extra_arguments "apply" {
+  #   commands = ["apply"]
+  #   arguments = ["-parallelism=10", "${get_terragrunt_dir()}/terraform.plan"]
+  # }
 }
 
 # Generate provider configuration

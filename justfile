@@ -152,7 +152,7 @@ apply-all ENVIRONMENT:
     TG_ENV_DIR=$(just tg-env-dir {{ENVIRONMENT}})
     
     echo "[*] Terragrunt run-all apply for {{ENVIRONMENT}}"
-    cd ${TG_ENV_DIR} && AWS_PROFILE=${PROFILE} terragrunt run --all apply --non-interactive
+    cd ${TG_ENV_DIR} && AWS_PROFILE=${PROFILE} terragrunt run --all --non-interactive apply
 
 # Run-all destroy for entire environment
 destroy-all ENVIRONMENT:
