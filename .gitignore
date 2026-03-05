@@ -161,7 +161,71 @@ cython_debug/
 
 .DS_Store
 
-# terraform modules, states and plan
-**/terraform.tfstate.*.backup
-**/.terraform
-**/tfplan
+# Terragrunt
+**/.terragrunt-cache/
+**/.terragrunt-*
+*.terragrunt-*
+
+# Terraform
+**/.terraform/
+*.tfstate
+*.tfstate.*
+*.tfplan
+**/terraform.plan
+*.tfvars.json
+override.tf
+override.tf.json
+terraform.tfvars.json
+terraform.rc
+crash.log
+crash.*.log
+
+# OS files
+.DS_Store
+*.log
+*.tmp
+*.bak
+*.swp
+*.swo
+*~
+
+# IDE files
+.vscode/
+.idea/
+*.iml
+.project
+.classpath
+.settings/
+
+# Secret files (don't commit these)
+**/*.secret
+**/*.auto.tfvars
+**/terraform.tfvars
+**/secret.tfvars
+**/private.auto.tfvars
+
+# Environment specific
+**/.env
+**/.env.*
+**/env-*/
+
+# Module dependencies
+**/modules/.terraform/
+**/modules/*/.terraform/
+
+# Terragrunt wrapper scripts
+terragrunt-wrapper.sh
+terragrunt.bat
+terragrunt.exe
+
+# Terragrunt debug files
+terragrunt-debug.log
+terragrunt.log
+
+# Dependency directories
+**/vendor/
+**/node_modules/
+
+# Backup files
+**/*.backup
+**/*.back
