@@ -7,16 +7,18 @@ module "batch_execution_role" {
   principals = {
     "Service" = {
       type        = "Service"
-      identifiers = ["batch.amazonaws.com"]
+      identifiers = ["ecs-tasks.amazonaws.com"]
     }
   }
   aws_managed_policy_arns = [
     "arn:${local.aws_partition}:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy",
     "arn:${local.aws_partition}:iam::aws:policy/EC2InstanceProfileForImageBuilderECRContainerBuilds"
   ]
-  user_managed_policies = {
-    "secrets-policy" = data.aws_iam_policy_document.role_policy.json
-  }
+  # Add neccessary permissions if the Batch job needs interactions with other AWS Services.
+  # For exmaple grant permissions to get specific secrets from Secrets Manager should be added here.
+  # user_managed_policies = {
+  #   "secrets-policy" = data.aws_iam_policy_document.role_policy.json
+  # }
   tags = var.tags
 }
 
