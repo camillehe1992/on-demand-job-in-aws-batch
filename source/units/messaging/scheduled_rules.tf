@@ -20,5 +20,3 @@ module "submit_batch_job_event_rule" {
   }
   tags = var.tags
 }
-
-

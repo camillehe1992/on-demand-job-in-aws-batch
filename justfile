@@ -68,10 +68,10 @@ plan ENVIRONMENT UNIT:
     #!/usr/bin/env bash
     PROFILE=$(just aws-profile)
     TG_DIR=$(just tg-unit-dir {{ENVIRONMENT}} {{UNIT}})
-    
+
     # First run pre-check
     just pre-check {{ENVIRONMENT}} {{UNIT}}
-    
+
     echo "[*] Terragrunt planning {{ENVIRONMENT}}/{{UNIT}}"
     cd ${TG_DIR} && AWS_PROFILE=${PROFILE} terragrunt plan
 
@@ -80,7 +80,7 @@ apply ENVIRONMENT UNIT:
     #!/usr/bin/env bash
     PROFILE=$(just aws-profile)
     TG_DIR=$(just tg-unit-dir {{ENVIRONMENT}} {{UNIT}})
-    
+
     echo "[*] Terragrunt applying {{ENVIRONMENT}}/{{UNIT}}"
     cd ${TG_DIR} && AWS_PROFILE=${PROFILE} terragrunt apply --auto-approve
 
@@ -89,7 +89,7 @@ destroy ENVIRONMENT UNIT:
     #!/usr/bin/env bash
     PROFILE=$(just aws-profile)
     TG_DIR=$(just tg-unit-dir {{ENVIRONMENT}} {{UNIT}})
-    
+
     echo "[*] Terragrunt destroying {{ENVIRONMENT}}/{{UNIT}}"
     cd ${TG_DIR} && AWS_PROFILE=${PROFILE} terragrunt destroy --auto-approve
 
@@ -98,7 +98,7 @@ output ENVIRONMENT UNIT:
     #!/usr/bin/env bash
     PROFILE=$(just aws-profile)
     TG_DIR=$(just tg-unit-dir {{ENVIRONMENT}} {{UNIT}})
-    
+
     echo "[*] Terragrunt output for {{ENVIRONMENT}}/{{UNIT}}"
     cd ${TG_DIR} && AWS_PROFILE=${PROFILE} terragrunt output
 
@@ -107,10 +107,10 @@ plan-destroy ENVIRONMENT UNIT:
     #!/usr/bin/env bash
     PROFILE=$(just aws-profile)
     TG_DIR=$(just tg-unit-dir {{ENVIRONMENT}} {{UNIT}})
-    
+
     # First run pre-check
     just pre-check {{ENVIRONMENT}} {{UNIT}}
-    
+
     echo "[*] Terragrunt planning destruction for {{ENVIRONMENT}}/{{UNIT}}"
     cd ${TG_DIR} && AWS_PROFILE=${PROFILE} terragrunt plan -destroy
 
@@ -119,18 +119,9 @@ validate ENVIRONMENT UNIT:
     #!/usr/bin/env bash
     PROFILE=$(just aws-profile)
     TG_DIR=$(just tg-unit-dir {{ENVIRONMENT}} {{UNIT}})
-    
+
     echo "[*] Terragrunt validating {{ENVIRONMENT}}/{{UNIT}}"
     cd ${TG_DIR} && AWS_PROFILE=${PROFILE} terragrunt validate
-
-# Terragrunt fmt (format)
-fmt ENVIRONMENT UNIT:
-    #!/usr/bin/env bash
-    PROFILE=$(just aws-profile)
-    TG_DIR=$(just tg-unit-dir {{ENVIRONMENT}} {{UNIT}})
-    
-    echo "[*] Terragrunt formatting {{ENVIRONMENT}}/{{UNIT}}"
-    cd ${TG_DIR} && AWS_PROFILE=${PROFILE} terragrunt hclfmt
 
 # ------------------------------------------------------------------------------
 # Run-all commands (for multiple units)
@@ -141,7 +132,7 @@ plan-all ENVIRONMENT:
     #!/usr/bin/env bash
     PROFILE=$(just aws-profile)
     TG_ENV_DIR=$(just tg-env-dir {{ENVIRONMENT}})
-    
+
     echo "[*] Terragrunt run-all plan for {{ENVIRONMENT}}"
     cd ${TG_ENV_DIR} && AWS_PROFILE=${PROFILE} terragrunt run --all plan
 
@@ -150,7 +141,7 @@ apply-all ENVIRONMENT:
     #!/usr/bin/env bash
     PROFILE=$(just aws-profile)
     TG_ENV_DIR=$(just tg-env-dir {{ENVIRONMENT}})
-    
+
     echo "[*] Terragrunt run-all apply for {{ENVIRONMENT}}"
     cd ${TG_ENV_DIR} && AWS_PROFILE=${PROFILE} terragrunt run --all --non-interactive apply
 
@@ -159,16 +150,16 @@ destroy-all ENVIRONMENT:
     #!/usr/bin/env bash
     PROFILE=$(just aws-profile)
     TG_ENV_DIR=$(just tg-env-dir {{ENVIRONMENT}})
-    
+
     echo "[*] Terragrunt run-all destroy for {{ENVIRONMENT}}"
-    cd ${TG_ENV_DIR} && AWS_PROFILE=${PROFILE} terragrunt run --all destroy 
-    
+    cd ${TG_ENV_DIR} && AWS_PROFILE=${PROFILE} terragrunt run --all destroy
+
 # Run-all output for entire environment
 output-all ENVIRONMENT:
     #!/usr/bin/env bash
     PROFILE=$(just aws-profile)
     TG_ENV_DIR=$(just tg-env-dir {{ENVIRONMENT}})
-    
+
     echo "[*] Terragrunt run-all output for {{ENVIRONMENT}}"
     cd ${TG_ENV_DIR} && AWS_PROFILE=${PROFILE} terragrunt run --all output
 
@@ -177,7 +168,7 @@ validate-all ENVIRONMENT:
     #!/usr/bin/env bash
     PROFILE=$(just aws-profile)
     TG_ENV_DIR=$(just tg-env-dir {{ENVIRONMENT}})
-    
+
     echo "[*] Terragrunt run-all validate for {{ENVIRONMENT}}"
     cd ${TG_ENV_DIR} && AWS_PROFILE=${PROFILE} terragrunt run --all validate
 
@@ -196,6 +187,16 @@ clean:
     find {{PROJECT_ROOT}} -type d -name ".terraform" -exec rm -rf {} + 2>/dev/null || true
     find {{PROJECT_ROOT}} -type f -name "*.tfstate*" -delete
 
+# Terragrunt fmt (format)
+hcl-fmt:
+    #!/usr/bin/env bash
+    terragrunt hcl format
+
+# Terragrunt validate (validate configuration)
+hcl-validate:
+    #!/usr/bin/env bash
+    terragrunt hcl validate
+
 # Show help
 help:
     @just --list --unsorted
@@ -213,10 +214,10 @@ submit-job ENVIRONMENT UNIT JOB_NAME:
     #!/usr/bin/env bash
     PROFILE=$(just aws-profile)
     TG_DIR=$(just tg-unit-dir {{ENVIRONMENT}} {{UNIT}})
-    
+
     echo "[*] Fetching job definition and job queue from terragrunt output"
     cd ${TG_DIR}
-    
+
     # Get job definition ARN from terragrunt output
     JOB_DEFINITION=$(AWS_PROFILE=${PROFILE} terragrunt output -raw batch_job_definition_arn 2>/dev/null || echo "")
     if [ -z "$JOB_DEFINITION" ]; then
@@ -225,7 +226,7 @@ submit-job ENVIRONMENT UNIT JOB_NAME:
         AWS_PROFILE=${PROFILE} terragrunt output
         exit 1
     fi
-    
+
     # Get job queue ARN from terragrunt output
     JOB_QUEUE=$(AWS_PROFILE=${PROFILE} terragrunt output -raw batch_job_queue_arn 2>/dev/null || echo "")
     if [ -z "$JOB_QUEUE" ]; then
@@ -234,21 +235,21 @@ submit-job ENVIRONMENT UNIT JOB_NAME:
         AWS_PROFILE=${PROFILE} terragrunt output
         exit 1
     fi
-    
+
     echo "[*] Submitting batch job with:"
     echo "    Environment: {{ENVIRONMENT}}"
     echo "    Unit: {{UNIT}}"
     echo "    Job Name: {{JOB_NAME}}"
     echo "    Job Definition: $JOB_DEFINITION"
     echo "    Job Queue: $JOB_QUEUE"
-    
+
     # Submit the batch job
     echo "[*] Executing: aws batch submit-job --job-name {{JOB_NAME}} --job-definition $JOB_DEFINITION --job-queue $JOB_QUEUE"
     AWS_PROFILE=${PROFILE} aws batch submit-job \
         --job-name "{{JOB_NAME}}" \
         --job-definition "$JOB_DEFINITION" \
         --job-queue "$JOB_QUEUE"
-    
+
     echo "[*] Batch job submitted successfully!"
 
 # ------------------------------------------------------------------------------
@@ -259,7 +260,7 @@ submit-job ENVIRONMENT UNIT JOB_NAME:
 docs:
     #!/usr/bin/env bash
     echo "[*] Generating documentation for modules and units under source directory"
-    
+
     # Check if terraform-docs is installed
     if ! command -v terraform-docs &> /dev/null; then
         echo "[!] terraform-docs is not installed. Installing..."
@@ -270,7 +271,7 @@ docs:
             exit 1
         fi
     fi
-    
+
     # Generate docs for modules in source/modules/
     echo "[*] Generating documentation for modules in source/modules/"
     for module_dir in {{PROJECT_ROOT}}/source/modules/*/; do
@@ -280,7 +281,7 @@ docs:
             terraform-docs markdown "$module_dir" > "$module_dir/README.md" || echo "  [!] Failed to generate docs for $module_name"
         fi
     done
-    
+
     # Generate docs for units in source/units/
     echo "[*] Generating documentation for units in source/units/"
     for unit_dir in {{PROJECT_ROOT}}/source/units/*/; do
@@ -290,7 +291,7 @@ docs:
             terraform-docs markdown "$unit_dir" > "$unit_dir/README.md" || echo "  [!] Failed to generate docs for $unit_name"
         fi
     done
-    
+
     echo "[*] Documentation generation completed!"
 
 # Clean up all generated documentation
@@ -300,4 +301,3 @@ clean-docs:
     find {{PROJECT_ROOT}}/source/modules -name "README.md" -delete
     find {{PROJECT_ROOT}}/source/units -name "README.md" -delete
     echo "[*] Documentation cleaned up!"
-

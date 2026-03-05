@@ -1,0 +1,82 @@
+# Pre-commit configuration for Terraform/Terragrunt projects
+# Install with: pre-commit install
+# Run manually with: pre-commit run --all-files
+
+repos:
+  # Terragrunt HCL Format
+  - repo: local
+    hooks:
+      - id: terragrunt-hclfmt
+        name: Terragrunt HCL Format
+        entry: bash -c 'find environments -name "*.hcl" -type f -exec terragrunt hcl format {} \;'
+        language: system
+        files: \.hcl$
+        pass_filenames: false
+        description: Format all Terragrunt HCL files
+
+      # Terragrunt HCL Validate
+      - id: terragrunt-hcl-validate
+        name: Terragrunt HCL Validate
+        entry: bash -c 'find environments -name "*.hcl" -type f -exec terragrunt hcl validate {} \;'
+        language: system
+        files: \.hcl$
+        pass_filenames: false
+        description: Validate all Terragrunt HCL files
+
+      # Documentation Generation
+      - id: generate-docs
+        name: Generate Documentation
+        entry: just docs
+        language: system
+        pass_filenames: false
+        description: Generate documentation for all modules and units
+
+  # Additional useful hooks
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.5.0
+    hooks:
+      - id: trailing-whitespace
+        name: Trim Trailing Whitespace
+        description: Remove trailing whitespace from all files
+
+      - id: end-of-file-fixer
+        name: Fix End of Files
+        description: Ensure files end with a newline
+
+      - id: check-yaml
+        name: Check YAML Syntax
+        description: Validate YAML syntax
+
+      - id: check-json
+        name: Check JSON Syntax
+        description: Validate JSON syntax
+
+      - id: check-merge-conflict
+        name: Check Merge Conflicts
+        description: Check for unresolved merge conflicts
+
+  # Terraform/Terragrunt specific hooks
+  - repo: https://github.com/antonbabenko/pre-commit-terraform
+    rev: v1.88.0
+    hooks:
+      - id: terraform_fmt
+        name: Terraform Format
+        description: Format Terraform files
+
+      # - id: terraform_validate
+      #   name: Terraform Validate
+      #   description: Validate Terraform syntax
+      #   args:
+      #     - --args=-json
+
+# Configuration for specific hooks
+exclude: |
+  (?x)^(
+    \.terragrunt-cache/.*|
+    \.terraform/.*|
+    \.git/.*|
+    node_modules/.*|
+    vendor/.*|
+    \.idea/.*|
+    \.vscode/.*
+  )$

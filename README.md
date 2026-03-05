@@ -19,31 +19,29 @@ Workflow steps:
 4. The container should implement some tasks on your behave. An email notification will be triggered if the job is failed.
 5. After done, the container will be stopped and removed. EC2 Instance is shutdown automatically by AWS Batch.
 
-## Terraform Structure
+## Terragrunt Structure
 
-All AWS infrastructure is created and maintained using Terraform. The Terraform structure contains several components shows as below.
+All AWS infrastructure is created and maintained using Terragrunt. The Terragrunt structure contains several components shows as below.
 
 ```bash
 .
-├── environments
-│   ├── common.hcl
-│   ├── dev
+├── environments                      # Terragrunt environments directory
+│   ├── common.hcl                    # Common Terragrunt configuration file
+│   ├── dev                           # Development environment Terragrunt configuration directory
 │   │   ├── compute
 │   │   ├── env.hcl
 │   │   ├── messaging
 │   │   └── security
-│   ├── prod
+│   ├── prod                          # Production environment Terragrunt configuration directory
 │   ├── root.hcl
-│   └── staging
-├── images
-├── justfile
-└── source
-    ├── modules
+│   └── staging                       # Staging environment Terragrunt configuration directory
+└── source                            # Terraform source code directory
+    ├── modules                       # Terraform modules directory
     │   ├── eventbridge_rule
     │   ├── iam_role
     │   ├── secretsmanager
     │   └── sns_topic
-    └── units
+    └── units                         # Terraform units directory
         ├── compute
         ├── messaging
         └── security
@@ -121,3 +119,6 @@ The logging data is saved to CloudWatch Logs automatically. You can find the log
 4. [AWS Batch - CloudWatch Event Target](https://docs.aws.amazon.com/batch/latest/userguide/batch-cwe-target.html)
 5. [AWS Batch - SNS Notification](https://docs.aws.amazon.com/batch/latest/userguide/batch_sns_tutorial.html)
 6. [AWS Batch - CloudWatch Event](https://docs.aws.amazon.com/batch/latest/userguide/batch_cwe_events.html)
+7. [Terraform](https://developer.hashicorp.com/terraform)
+8. [AWS Provider for Terraform](https://registry.terraform.io/providers/hashicorp/aws/latest/docs)
+9. [Terragrunt](https://docs.terragrunt.com/getting-started/quick-start/)
