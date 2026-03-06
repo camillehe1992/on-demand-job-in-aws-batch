@@ -134,7 +134,7 @@ plan-all ENVIRONMENT:
     TG_ENV_DIR=$(just tg-env-dir {{ENVIRONMENT}})
 
     echo "[*] Terragrunt run-all plan for {{ENVIRONMENT}}"
-    cd ${TG_ENV_DIR} && AWS_PROFILE=${PROFILE} terragrunt run --all plan
+    cd ${TG_ENV_DIR} && AWS_PROFILE=${PROFILE} terragrunt run --all -- plan
 
 # Run-all apply for entire environment
 apply-all ENVIRONMENT:

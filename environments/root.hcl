@@ -27,13 +27,9 @@ locals {
 
 terraform {
   source = "${get_terragrunt_dir()}/../../../source//units/${basename(get_original_terragrunt_dir())}"
-  # extra_arguments "disable_input" {
-  #   commands = get_terraform_commands_that_need_input()
-  #   arguments = ["-input=false"]
-  # }
   extra_arguments "plan" {
     commands  = ["plan"]
-    arguments = ["-parallelism=10", "-out=${get_terragrunt_dir()}/terraform.plan"]
+    arguments = ["-detailed-exitcode", "-parallelism", "10", "-out=${get_terragrunt_dir()}/terraform.plan"]
   }
   # extra_arguments "apply" {
   #   commands = ["apply"]
