@@ -1,6 +1,7 @@
 name: Terraform Apply
 
-run-name: "⚡ Terraform Apply - ${{ inputs.environment }} (Manual)"
+run-name: |
+  ⚡ Terraform Apply - ${{ inputs.environment }} (Manual)
 
 on:
   workflow_dispatch:

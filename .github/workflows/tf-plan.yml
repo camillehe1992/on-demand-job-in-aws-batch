@@ -1,7 +1,7 @@
 name: Terraform Plan
 
 run-name: |
-  "🚀 Terraform Plan - ${{ github.event_name == 'workflow_dispatch' && inputs.environment || 'dev' }} (${{ github.event_name == 'workflow_dispatch' && 'Manual' || 'Auto' }})"
+  🚀 Terraform Plan - ${{ github.event_name == 'workflow_dispatch' && inputs.environment || 'dev' }} (${{ github.event_name == 'workflow_dispatch' && 'Manual' || 'Auto' }})
 
 on:
   # Automatic trigger for dev environment when files change
