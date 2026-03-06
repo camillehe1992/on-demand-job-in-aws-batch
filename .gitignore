@@ -165,6 +165,7 @@ cython_debug/
 **/.terragrunt-cache/
 **/.terragrunt-*
 *.terragrunt-*
+!.terragrunt-version
 
 # Terraform
 **/.terraform/
