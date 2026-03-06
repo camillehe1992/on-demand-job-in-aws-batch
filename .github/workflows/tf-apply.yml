@@ -148,7 +148,7 @@ jobs:
 
       - name: Get Terragrunt Version from Source
         run: |
-          TG_VERSION=$(cat .terragrunt_version.txt)
+          TG_VERSION=$(cat .terragrunt-version)
           echo "TG_VERSION=$TG_VERSION" >> $GITHUB_ENV
 
       - name: Setup Terragrunt
