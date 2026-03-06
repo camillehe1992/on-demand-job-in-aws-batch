@@ -23,10 +23,10 @@ No modules.
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
-| <a name="input_batch_target_specs"></a> [batch\_target\_specs](#input\_batch\_target\_specs) | The specifications for the Batch job to submit | <pre>object({<br>    job_definition = string<br>    job_name       = string<br>    array_size     = number<br>    job_attempts   = number<br>  })</pre> | `null` | no |
+| <a name="input_batch_target_specs"></a> [batch\_target\_specs](#input\_batch\_target\_specs) | The specifications for the Batch job to submit | <pre>object({<br/>    job_definition = string<br/>    job_name       = string<br/>    array_size     = number<br/>    job_attempts   = number<br/>  })</pre> | `null` | no |
 | <a name="input_event_bus_name"></a> [event\_bus\_name](#input\_event\_bus\_name) | The name of the event bus to associate with this rule. Default to default | `string` | `"default"` | no |
 | <a name="input_event_pattern"></a> [event\_pattern](#input\_event\_pattern) | The event pattern that rule should capture. At least one of schedule\_expression or event\_pattern is required. | `string` | `null` | no |
-| <a name="input_input_transformer_specs"></a> [input\_transformer\_specs](#input\_input\_transformer\_specs) | The input transformer specifications for the rule | <pre>object({<br>    input_paths    = map(string)<br>    input_template = string<br>  })</pre> | `null` | no |
+| <a name="input_input_transformer_specs"></a> [input\_transformer\_specs](#input\_input\_transformer\_specs) | The input transformer specifications for the rule | <pre>object({<br/>    input_paths    = map(string)<br/>    input_template = string<br/>  })</pre> | `null` | no |
 | <a name="input_is_enabled"></a> [is\_enabled](#input\_is\_enabled) | If enable the rule. Default to true | `bool` | `true` | no |
 | <a name="input_role_arn"></a> [role\_arn](#input\_role\_arn) | The ARN of the IAM role to be used for this target when the rule is triggered | `string` | `null` | no |
 | <a name="input_rule_description"></a> [rule\_description](#input\_rule\_description) | The description of the rule | `string` | `""` | no |

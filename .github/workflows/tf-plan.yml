@@ -5,7 +5,6 @@ on:
   push:
     branches:
       - main
-      - feature/ai-refactor
     paths:
       - "environments/**"
       - "source/**"
@@ -106,18 +105,37 @@ jobs:
       - name: Terraform Plan
         id: tf-plan
         run: |
-          cd environments/${{ needs.determine-environment.outputs.environment }}
-          just plan-all ${{ needs.determine-environment.outputs.environment }} || echo "Plan completed with exit code: $?"
+          ENVIRONMENT=${{ needs.determine-environment.outputs.environment }}
+          cd environments/${ENVIRONMENT}
 
-          # Check if there are changes
-          if just output-all ${{ needs.determine-environment.outputs.environment }} 2>/dev/null; then
+          echo "[*] Running Terraform plan for ${ENVIRONMENT} environment"
+
+          # Run terragrunt plan with detailed exit code and capture the exit code
+          set +e  # Allow the command to fail without stopping the script
+          just plan-all ${ENVIRONMENT}
+          PLAN_EXIT_CODE=$?
+          set -e  # Re-enable exit on error
+
+          echo "[*] Terraform plan completed with exit code: ${PLAN_EXIT_CODE}"
+
+          # Interpret the exit code:
+          # 0 = No changes
+          # 1 = Error
+          # 2 = Changes detected
+          if [ ${PLAN_EXIT_CODE} -eq 2 ]; then
             echo "tfplanExitCode=2" >> $GITHUB_OUTPUT
-          else
+            echo "[*] ✅ Changes detected in Terraform plan"
+          elif [ ${PLAN_EXIT_CODE} -eq 0 ]; then
             echo "tfplanExitCode=0" >> $GITHUB_OUTPUT
+            echo "[*] ✅ No changes detected in Terraform plan"
+          else
+            echo "tfplanExitCode=1" >> $GITHUB_OUTPUT
+            echo "[!] ❌ Terraform plan failed with exit code: ${PLAN_EXIT_CODE}"
+            exit 1
           fi
 
       - name: Generate Detailed Terraform Plan Summary
-        if: steps.tf-plan.outputs.exitcode == '2'
+        if: steps.tf-plan.outputs.tfplanExitCode == '2'
         run: |
           ENVIRONMENT=${{ needs.determine-environment.outputs.environment }}
           cd environments/${ENVIRONMENT}
@@ -151,7 +169,7 @@ jobs:
           echo "- **Workflow Run:** [View Details](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})" >> $GITHUB_STEP_SUMMARY
 
       - name: Generate No Changes Summary
-        if: steps.tf-plan.outputs.exitcode == '0'
+        if: steps.tf-plan.outputs.tfplanExitCode == '0'
         run: |
           ENVIRONMENT=${{ needs.determine-environment.outputs.environment }}
           echo "## ✅ Terraform Plan Summary" >> $GITHUB_STEP_SUMMARY

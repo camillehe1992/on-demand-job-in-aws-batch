@@ -29,7 +29,7 @@ No requirements.
 |------|-------------|------|---------|:--------:|
 | <a name="input_application_name"></a> [application\_name](#input\_application\_name) | The name of application. Must be lowercase without special chars | `string` | n/a | yes |
 | <a name="input_env"></a> [env](#input\_env) | The environment of application | `string` | n/a | yes |
-| <a name="input_secret_specs"></a> [secret\_specs](#input\_secret\_specs) | A map of secrets with key-value pairs | <pre>map(object({<br>    description   = string<br>    secret_string = string<br>  }))</pre> | `{}` | no |
+| <a name="input_secret_specs"></a> [secret\_specs](#input\_secret\_specs) | A map of secrets with key-value pairs | <pre>map(object({<br/>    description   = string<br/>    secret_string = string<br/>  }))</pre> | `{}` | no |
 | <a name="input_tags"></a> [tags](#input\_tags) | The key value pairs we want to apply as tags to the resources contained in this module | `map(string)` | `{}` | no |
 
 ## Outputs

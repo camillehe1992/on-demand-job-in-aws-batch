@@ -32,7 +32,7 @@ No modules.
 | <a name="input_command"></a> [command](#input\_command) | The command that's passed to the container. | `list(string)` | n/a | yes |
 | <a name="input_desired_vcpus"></a> [desired\_vcpus](#input\_desired\_vcpus) | The number of vCPUs that your compute environment launches with. | `number` | `0` | no |
 | <a name="input_env"></a> [env](#input\_env) | The environment of application | `string` | n/a | yes |
-| <a name="input_environment"></a> [environment](#input\_environment) | The environment variables to pass to a container. | <pre>list(object({<br>    name  = string<br>    value = string<br>  }))</pre> | `[]` | no |
+| <a name="input_environment"></a> [environment](#input\_environment) | The environment variables to pass to a container. | <pre>list(object({<br/>    name  = string<br/>    value = string<br/>  }))</pre> | `[]` | no |
 | <a name="input_instance_types"></a> [instance\_types](#input\_instance\_types) | A list of instance type that launched in batch compute environment | `set(string)` | n/a | yes |
 | <a name="input_job_execution_role_arn"></a> [job\_execution\_role\_arn](#input\_job\_execution\_role\_arn) | The ARN of the Batch job execution role that AWS Batch can assume. | `string` | n/a | yes |
 | <a name="input_job_image"></a> [job\_image](#input\_job\_image) | The repository name of job image | `string` | `"public.ecr.aws/amazonlinux/amazonlinux:latest"` | no |
@@ -44,7 +44,7 @@ No modules.
 | <a name="input_resource_requirements_mem"></a> [resource\_requirements\_mem](#input\_resource\_requirements\_mem) | The memory hard limit (in MiB) present to the container. | `string` | `"128"` | no |
 | <a name="input_resource_requirements_vcpu"></a> [resource\_requirements\_vcpu](#input\_resource\_requirements\_vcpu) | The number of vCPUs reserved for the container. Each vCPU is equivalent to 1,024 CPU shares | `string` | `"1"` | no |
 | <a name="input_retry_strategy_attempts"></a> [retry\_strategy\_attempts](#input\_retry\_strategy\_attempts) | The number of times to move a job to the RUNNABLE status. You may specify between 1 and 10 attempts. | `number` | n/a | yes |
-| <a name="input_secrets"></a> [secrets](#input\_secrets) | The secrets for the container. | <pre>list(object({<br>    name      = string<br>    valueFrom = string<br>  }))</pre> | `[]` | no |
+| <a name="input_secrets"></a> [secrets](#input\_secrets) | The secrets for the container. | <pre>list(object({<br/>    name      = string<br/>    valueFrom = string<br/>  }))</pre> | `[]` | no |
 | <a name="input_security_group_ids"></a> [security\_group\_ids](#input\_security\_group\_ids) | Security Group ids that Batch job runs in | `list(string)` | n/a | yes |
 | <a name="input_subnet_ids"></a> [subnet\_ids](#input\_subnet\_ids) | Subnet ids that Batch job runs in | `list(string)` | n/a | yes |
 | <a name="input_tags"></a> [tags](#input\_tags) | The key value pairs we want to apply as tags to the resources contained in this module | `map(string)` | `{}` | no |
