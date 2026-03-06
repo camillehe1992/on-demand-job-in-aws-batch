@@ -5,7 +5,7 @@ So, if you have knowledge and experience on Terraform and AWS Batch service, and
 
 So, what is AWS Batch? As a fully managed service, AWS Batch helps you to run batch computing workloads of any scale. With AWS Batch, we define provisioning resources and schedulers, package application in a container, specify job's dependencies in job definition. The workload is triggered by CloudWatch Event (EventBridge) as scheduled, and processed in AWS EC2 instance. AWS Batch dynamically provisions the optimal quantity and type of compute resources based on the volume and specified resource requirements of the batch jobs submitted.
 
-## Project Architecture
+## 📁 Project Architecture
 
 Here is the architecutre diagram for the Batch solution.
 
@@ -19,7 +19,7 @@ Workflow steps:
 4. The container should implement some tasks on your behave. An email notification will be triggered if the job is failed.
 5. After done, the container will be stopped and removed. EC2 Instance is shutdown automatically by AWS Batch.
 
-## Terragrunt Structure
+## 📁 Terragrunt Structure
 
 All AWS infrastructure is created and maintained using Terragrunt. The Terragrunt structure contains several components shows as below.
 
@@ -47,7 +47,7 @@ All AWS infrastructure is created and maintained using Terragrunt. The Terragrun
         └── security
 ```
 
-## Deploy/Destory Terraform Infrastructure
+## 🚀 Deploy/Destory Terraform Infrastructure
 
 To deploy/destory the Terraform infrastructure, please follow the steps as below.
 
@@ -67,7 +67,7 @@ just apply-all dev
 just destroy-all dev
 ```
 
-## Generate Documentation for Modules and Units
+## 📚 Generate Documentation for Modules and Units
 
 To generate documentation for all modules and units, please follow the steps as below.
 
@@ -79,7 +79,7 @@ just docs
 just clean-docs
 ```
 
-## Submit Batch Job Manually
+## ⚡ Submit Batch Job Manually
 
 Currently, the Batch job is submitted/triggered by CloudWatch Event (EventBridge) per day regularly as scheduled. However, you are allowed to submit a job manually via [AWS CLI](https://docs.aws.amazon.com/cli/latest/reference/batch/submit-job.html) as below. Or from AWS Console directly.
 
@@ -107,11 +107,97 @@ As designed, we keep the `desired_vcpus` as `0` as default for saving cost, whic
 
 ![Job Overview](./images/batch-job.png)
 
-## Logging
+## 📊 Logging
 
 The logging data is saved to CloudWatch Logs automatically. You can find the logs on the bottom of the job details (some delay to sync logs from CloudWatch Logs). In the job details view page, it also provides a link to the log stream of current job. AWS creates a CloudWatch Logs group named `/aws/batch/job` automatically when you submit a Batch job at the first time in the same region.
 
-## Reference
+## 🔄 GitHub Actions Workflow for CICD
+
+Use GitHub Actions workflow to apply Terraform infrastructure changes to target AWS account. This project uses modern OIDC authentication for secure, keyless access to AWS resources.
+
+### 🔐 OIDC Authentication Setup
+
+The workflows use OpenID Connect (OIDC) for secure authentication with AWS, eliminating the need for long-lived access keys.
+
+### 📋 Prerequisites
+
+1. **GitHub Environment Variables** (set in your repository settings):
+   - `ROLE_TO_ASSUME`: ARN of the IAM role to assume (e.g., `arn:aws:iam::123456789012:role/GitHubActionsRole`)
+   - `ROLE_SESSION_NAME`: Session name for the assumed role (e.g., `github-actions-session`)
+   - `AWS_REGION`: Target AWS region (e.g., `ap-southeast-1`)
+
+2. **AWS IAM Role Configuration**:
+
+   ```json
+   {
+     "Version": "2012-10-17",
+     "Statement": [
+       {
+         "Effect": "Allow",
+         "Principal": {
+           "Federated": "arn:aws:iam::123456789012:oidc-provider/token.actions.githubusercontent.com"
+         },
+         "Action": "sts:AssumeRoleWithWebIdentity",
+         "Condition": {
+           "StringEquals": {
+             "token.actions.githubusercontent.com:aud": "sts.amazonaws.com",
+             "token.actions.githubusercontent.com:sub": "repo:your-org/*"
+           }
+         }
+       }
+     ]
+   }
+   ```
+
+### 🚀 Available Workflows
+
+#### 1. **Terraform Plan** (`tf-plan.yml`)
+
+**Purpose**: Validates infrastructure changes and shows what will be modified
+
+**Triggers**:
+
+- **Automatic**: On push to `main`/`develop` branches when files change in `environments/` or `source/`
+- **Manual**: Via GitHub portal for any environment (dev/staging/prod)
+
+**Usage**:
+
+```bash
+# Manual trigger via GitHub portal
+# Navigate to Actions → Terraform Plan → Run workflow
+# Select environment: dev/staging/prod
+```
+
+#### 2. **Terraform Apply** (`tf-apply.yml`)
+
+**Purpose**: Applies approved infrastructure changes to AWS
+
+**Triggers**: Manual only (for safety)
+
+**Usage**:
+
+```bash
+# Manual trigger via GitHub portal
+# Navigate to Actions → Terraform Apply → Run workflow
+# Select target environment: dev/staging/prod
+# Only runs terraform-apply step if Terraform Plan detected changes
+```
+
+### 📋 Workflow Status Indicators
+
+**Plan Workflow**:
+
+- 🚀 Terraform Plan - dev (Auto)` - Automatic dev environment plan
+- 🚀 Terraform Plan - staging (Manual)` - Manual staging plan
+- 🚀 Terraform Plan - prod (Manual)` - Manual production plan
+
+**Apply Workflow**:
+
+- ⚡ `Terraform Apply - dev (Manual)` - Manual dev deployment
+- ⚡ `Terraform Apply - staging (Manual)` - Manual staging deployment
+- ⚡ `Terraform Apply - prod (Manual)` - Manual production deployment
+
+📖 Reference
 
 1. [AWS Batch - What is AWS Batch?](https://docs.aws.amazon.com/batch/latest/userguide/what-is-batch.html)
 2. [AWS Batch Compute Environment - compute_resources](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/batch_compute_environment#compute_resources)
