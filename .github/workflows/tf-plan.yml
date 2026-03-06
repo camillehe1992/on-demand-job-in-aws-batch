@@ -94,7 +94,7 @@ jobs:
 
       - name: Get Terragrunt Version from Source
         run: |
-          TG_VERSION=$(cat .terragrunt_version.txt)
+          TG_VERSION=$(cat .terragrunt-version)
           echo "TG_VERSION=$TG_VERSION" >> $GITHUB_ENV
 
       - name: Setup Terragrunt
@@ -158,7 +158,7 @@ jobs:
           echo "### 🔧 Next Steps" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "1. Review the plan output above" >> $GITHUB_STEP_SUMMARY
-          echo "2. If changes look good, trigger the Terraform Apply workflow" >> $GITHUB_STEP_SUMMARY
+          echo "2. If changes look good, trigger the [Terraform Apply](https://github.com/${{ github.repository }}/actions/workflows/tf-apply.yml) workflow" >> $GITHUB_STEP_SUMMARY
           echo "3. Monitor the deployment in the AWS Batch console" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
 

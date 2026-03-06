@@ -1,4 +1,4 @@
-name: Terraform Plan & Apply
+name: Terraform Apply
 
 on:
   workflow_dispatch:
@@ -61,7 +61,7 @@ jobs:
 
       - name: Get Terragrunt Version from Source
         run: |
-          TG_VERSION=$(cat .terragrunt_version.txt)
+          TG_VERSION=$(cat .terragrunt-version)
           echo "TG_VERSION=$TG_VERSION" >> $GITHUB_ENV
 
       - name: Setup Terragrunt
@@ -72,14 +72,33 @@ jobs:
       - name: Terraform Plan
         id: tf-plan
         run: |
-          cd environments/${{ env.ENVIRONMENT }}
-          just plan-all ${{ env.ENVIRONMENT }} || echo "Plan completed with exit code: $?"
+          ENVIRONMENT=${{ env.ENVIRONMENT }}
+          cd environments/${ENVIRONMENT}
 
-          # Check if there are changes
-          if just output-all ${{ env.ENVIRONMENT }} 2>/dev/null; then
+          echo "[*] Running Terraform plan for ${ENVIRONMENT} environment"
+
+          # Run terragrunt plan with detailed exit code and capture the exit code
+          set +e  # Allow the command to fail without stopping the script
+          just plan-all ${ENVIRONMENT}
+          PLAN_EXIT_CODE=$?
+          set -e  # Re-enable exit on error
+
+          echo "[*] Terraform plan completed with exit code: ${PLAN_EXIT_CODE}"
+
+          # Interpret the exit code:
+          # 0 = No changes
+          # 1 = Error
+          # 2 = Changes detected
+          if [ ${PLAN_EXIT_CODE} -eq 2 ]; then
             echo "tfplanExitCode=2" >> $GITHUB_OUTPUT
-          else
+            echo "[*] ✅ Changes detected in Terraform plan"
+          elif [ ${PLAN_EXIT_CODE} -eq 0 ]; then
             echo "tfplanExitCode=0" >> $GITHUB_OUTPUT
+            echo "[*] ✅ No changes detected in Terraform plan"
+          else
+            echo "tfplanExitCode=1" >> $GITHUB_OUTPUT
+            echo "[!] ❌ Terraform plan failed with exit code: ${PLAN_EXIT_CODE}"
+            exit 1
           fi
 
       - name: Create Plan Summary
