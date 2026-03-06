@@ -31,7 +31,7 @@ jobs:
     runs-on: ubuntu-latest
     environment: "${{ inputs.environment }}"
     outputs:
-      tfplanExitCode: ${{ steps.tf-plan.outputs.exitcode }}
+      tfplanExitCode: ${{ steps.tf-plan.outputs.tfplanExitCode }}
 
     steps:
       - name: Checkout
