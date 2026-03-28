@@ -7,7 +7,6 @@ No requirements.
 | Name | Version |
 |------|---------|
 | <a name="provider_aws"></a> [aws](#provider\_aws) | n/a |
-| <a name="provider_random"></a> [random](#provider\_random) | n/a |
 
 ## Modules
 
@@ -20,7 +19,10 @@ No modules.
 | [aws_batch_compute_environment.compute_environment](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/batch_compute_environment) | resource |
 | [aws_batch_job_definition.batch_job_definition](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/batch_job_definition) | resource |
 | [aws_batch_job_queue.batch_job_queue](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/batch_job_queue) | resource |
-| [random_string.resource_suffix](https://registry.terraform.io/providers/hashicorp/random/latest/docs/resources/string) | resource |
+| [aws_eip.nat](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/eip) | resource |
+| [aws_nat_gateway.this](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/nat_gateway) | resource |
+| [aws_route.to_nat](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/route) | resource |
+| [aws_route_table.private](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/route_table) | data source |
 
 ## Inputs
 
@@ -41,12 +43,13 @@ No modules.
 | <a name="input_min_vcpus"></a> [min\_vcpus](#input\_min\_vcpus) | The min vCPU that the compute environment maintains | `number` | `0` | no |
 | <a name="input_mount_points"></a> [mount\_points](#input\_mount\_points) | The mount points for data volumes in your container. | `list(object({}))` | `[]` | no |
 | <a name="input_parameters"></a> [parameters](#input\_parameters) | The parameters that defined in command | `map(string)` | n/a | yes |
+| <a name="input_private_subnet_ids"></a> [private\_subnet\_ids](#input\_private\_subnet\_ids) | Private subnet ids that Batch job runs in | `list(string)` | n/a | yes |
+| <a name="input_public_subnet_ids"></a> [public\_subnet\_ids](#input\_public\_subnet\_ids) | Public subnet ids that NAT gateway runs in | `list(string)` | n/a | yes |
 | <a name="input_resource_requirements_mem"></a> [resource\_requirements\_mem](#input\_resource\_requirements\_mem) | The memory hard limit (in MiB) present to the container. | `string` | `"128"` | no |
 | <a name="input_resource_requirements_vcpu"></a> [resource\_requirements\_vcpu](#input\_resource\_requirements\_vcpu) | The number of vCPUs reserved for the container. Each vCPU is equivalent to 1,024 CPU shares | `string` | `"1"` | no |
 | <a name="input_retry_strategy_attempts"></a> [retry\_strategy\_attempts](#input\_retry\_strategy\_attempts) | The number of times to move a job to the RUNNABLE status. You may specify between 1 and 10 attempts. | `number` | n/a | yes |
 | <a name="input_secrets"></a> [secrets](#input\_secrets) | The secrets for the container. | <pre>list(object({<br/>    name      = string<br/>    valueFrom = string<br/>  }))</pre> | `[]` | no |
 | <a name="input_security_group_ids"></a> [security\_group\_ids](#input\_security\_group\_ids) | Security Group ids that Batch job runs in | `list(string)` | n/a | yes |
-| <a name="input_subnet_ids"></a> [subnet\_ids](#input\_subnet\_ids) | Subnet ids that Batch job runs in | `list(string)` | n/a | yes |
 | <a name="input_tags"></a> [tags](#input\_tags) | The key value pairs we want to apply as tags to the resources contained in this module | `map(string)` | `{}` | no |
 | <a name="input_volumes"></a> [volumes](#input\_volumes) | A list of data volumes used in a job. | `list(object({}))` | `[]` | no |
 | <a name="input_vpc_id"></a> [vpc\_id](#input\_vpc\_id) | The VPC ID that the compute environment is in. | `string` | n/a | yes |

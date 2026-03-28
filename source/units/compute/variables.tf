@@ -43,9 +43,14 @@ variable "vpc_id" {
   description = "The VPC ID that the compute environment is in."
 }
 
-variable "subnet_ids" {
+variable "public_subnet_ids" {
   type        = list(string)
-  description = "Subnet ids that Batch job runs in"
+  description = "Public subnet ids that NAT gateway runs in"
+}
+
+variable "private_subnet_ids" {
+  type        = list(string)
+  description = "Private subnet ids that Batch job runs in"
 }
 
 variable "security_group_ids" {

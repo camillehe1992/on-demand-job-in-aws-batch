@@ -22,7 +22,8 @@ inputs = merge(
 
     # Network configuration from common
     vpc_id             = local.network_config.vpc_id
-    subnet_ids         = local.network_config.private_subnet_ids
+    public_subnet_ids  = local.network_config.public_subnet_ids
+    private_subnet_ids = local.network_config.private_subnet_ids
     security_group_ids = local.network_config.security_group_ids
 
     # Environment-specific configuration

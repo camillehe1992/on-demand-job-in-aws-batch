@@ -1,11 +1,38 @@
-resource "random_string" "resource_suffix" {
-  length  = 3
-  special = false
-  upper   = false
+resource "aws_eip" "nat" {
+  domain = "vpc"
+
+  tags = {
+    Name = "nat-eip"
+  }
+}
+
+resource "aws_nat_gateway" "this" {
+  allocation_id = aws_eip.nat.id
+  subnet_id     = var.public_subnet_ids[0]
+
+  tags = merge(var.tags, {
+    "Name" = "${local.resource_prefix}-nat"
+  })
+}
+
+data "aws_route_table" "private" {
+  vpc_id = var.vpc_id
+
+  # filter by tag Type=private
+  filter {
+    name   = "tag:Type"
+    values = ["private"]
+  }
+}
+
+resource "aws_route" "to_nat" {
+  route_table_id         = data.aws_route_table.private.id
+  destination_cidr_block = "0.0.0.0/0"
+  nat_gateway_id         = aws_nat_gateway.this.id
 }
 
 resource "aws_batch_compute_environment" "compute_environment" {
-  name = "${local.resource_prefix}-ce-${random_string.resource_suffix.result}"
+  name = "${local.resource_prefix}-ce"
 
   compute_resources {
     instance_type = var.instance_types
@@ -15,7 +42,7 @@ resource "aws_batch_compute_environment" "compute_environment" {
     min_vcpus     = var.min_vcpus
     desired_vcpus = var.desired_vcpus
 
-    subnets            = var.subnet_ids
+    subnets            = var.private_subnet_ids
     security_group_ids = var.security_group_ids
 
     type                = "EC2"

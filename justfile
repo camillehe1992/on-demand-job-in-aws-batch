@@ -210,10 +210,10 @@ show-settings:
     echo "AWS_PROFILE: $(just aws-profile)"
 
 # Submit a batch job manually with job-name from terragrunt output
-submit-job ENVIRONMENT UNIT JOB_NAME:
+submit-job ENVIRONMENT JOB_NAME:
     #!/usr/bin/env bash
     PROFILE=$(just aws-profile)
-    TG_DIR=$(just tg-unit-dir {{ENVIRONMENT}} {{UNIT}})
+    TG_DIR=$(just tg-unit-dir {{ENVIRONMENT}} compute)
 
     echo "[*] Fetching job definition and job queue from terragrunt output"
     cd ${TG_DIR}
@@ -238,19 +238,19 @@ submit-job ENVIRONMENT UNIT JOB_NAME:
 
     echo "[*] Submitting batch job with:"
     echo "    Environment: {{ENVIRONMENT}}"
-    echo "    Unit: {{UNIT}}"
     echo "    Job Name: {{JOB_NAME}}"
     echo "    Job Definition: $JOB_DEFINITION"
     echo "    Job Queue: $JOB_QUEUE"
 
     # Submit the batch job
-    echo "[*] Executing: aws batch submit-job --job-name {{JOB_NAME}} --job-definition $JOB_DEFINITION --job-queue $JOB_QUEUE"
-    AWS_PROFILE=${PROFILE} aws batch submit-job \
+    echo "[*] Executing: aws batch submit-job"
+    JOB_ID=$(aws batch submit-job \
+        --profile ${PROFILE} \
         --job-name "{{JOB_NAME}}" \
         --job-definition "$JOB_DEFINITION" \
-        --job-queue "$JOB_QUEUE"
+        --job-queue "$JOB_QUEUE" | jq .jobId | xargs echo)
 
-    echo "[*] Batch job submitted successfully!"
+    echo "[*] Batch job submitted successfully! Job ID: $JOB_ID"
 
 # ------------------------------------------------------------------------------
 # Documentation generation commands
