@@ -83,22 +83,13 @@ just clean-docs
 
 Currently, the Batch job is submitted/triggered by CloudWatch Event (EventBridge) per day regularly as scheduled. However, you are allowed to submit a job manually via [AWS CLI](https://docs.aws.amazon.com/cli/latest/reference/batch/submit-job.html) as below. Or from AWS Console directly.
 
-### 1. `just submit-job ENVIRONMENT UNIT JOB_NAME`
+### 1. `just submit-job ENVIRONMENT JOB_NAME`
 
 Submits a batch job with the specified name.
 
 ```bash
 # Submit a simple job to dev environment
-just submit-job dev compute trigger-via-cli
-```
-
-### 2. `just submit-job-with-params ENVIRONMENT UNIT JOB_NAME PARAMETERS`
-
-Same as above but allows custom parameters.
-
-```bash
-# Submit a job with parameters
-just submit-job-with-params dev compute trigger-via-cli "key1=value1,key2=value2"
+just submit-job dev trigger-via-cli
 ```
 
 After submitted successfully, go to AWS Console -> Batch -> Jobs. Select the target job queue from the dropdown list, then your new submitted job will be listed on the top. It will spend a few minutes for a job to complete, according to the job processing time, and whether you allocate an EC2 instance resource in advance by giving variable `desired_vcpus` a number greater than 0 or not. If the job failed, an email notification will be sent out to the Topic subscribers you provided in variable `notification_email_addresses`.
